@@ -1,0 +1,33 @@
+node_modules
+.pnpm-store
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+/coverage
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# Local agent and editor state
+/.codex/
+/.claude/settings.local.json
+/.idea/
+
+# Logs and local build artifacts
+*.log

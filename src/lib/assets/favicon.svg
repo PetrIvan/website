@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+	<title>Petr Ivan</title>
+	<rect width="64" height="64" rx="16" fill="#f4efe6" />
+	<path
+		fill="#78463b"
+		d="M18 52V12h17c10.8 0 17 5.8 17 15s-6.2 15-17 15h-7v10H18Zm10-19h7c4.7 0 7-2 7-6s-2.3-6-7-6h-7v12Z"
+	/>
+</svg>

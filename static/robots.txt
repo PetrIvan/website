@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /
+
+# Deliberately block indexing during private development.
+# Replace this file at public launch.

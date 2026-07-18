@@ -1,0 +1,27 @@
+---
+title: Placeholder post
+description: Temporary content for developing and testing the blog layout.
+date: 2026-07-18
+draft: true
+---
+
+This post exists only to exercise the article layout while the website is being
+built. It must not appear in a production build, the RSS feed, or the sitemap.
+
+## A representative section
+
+Real posts will be a place to explore ideas honestly: what seems interesting,
+where it connects to existing work, and what remains uncertain. The design
+should make ordinary prose comfortable to read without making every paragraph
+feel like a manifesto.
+
+> A block quote is included here so its spacing, color, and typography can be
+> designed before a real article depends on them.
+
+The final article system should also handle [references](https://example.com),
+inline `code`, lists, figures, and richer Svelte components when they are
+actually useful.
+
+- A short list item
+- Another item with enough text to wrap on a narrow screen
+- A final item for checking vertical rhythm
