@@ -22,13 +22,15 @@ Requirements:
 - Node.js 22.12 or newer
 - pnpm 10.17.1
 - Playwright browser engines for end-to-end tests
-- Typst 0.14.2
+- Typst 0.14.2 only when rebuilding the résumé PDF
 
 ```powershell
 pnpm install
 pnpm exec playwright install chromium firefox webkit
 pnpm run dev
 ```
+
+By default, `pnpm run dev` serves the site at `http://localhost:1420`.
 
 Use `pnpm run validate` for complete local verification. The README and
 `package.json` are the command reference.
@@ -167,8 +169,8 @@ Use the narrowest checks that cover the change:
 | Documentation or agent instructions                       | validate links and commands, then run Prettier in check mode on affected files                                                                           |
 | Skills                                                    | `pnpm run skills:validate` and Prettier in check mode                                                                                                    |
 
-`pnpm run validate` rebuilds the résumé PDF before regenerating the public
-social card and portrait copy as part of the test build.
+`pnpm run build`, `pnpm run test:e2e`, and `pnpm run validate` regenerate the
+public social card and portrait copy as a documented build step.
 
 ## Git and GitHub
 

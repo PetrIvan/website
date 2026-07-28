@@ -35,18 +35,16 @@ personal material. Surface uncertain files to the user instead of guessing.
 Group the approved work into self-contained thematic commits. Format only the
 files in scope when possible.
 
-Before committing, run the complete locally reproducible CI gate against the
-exact changes intended for the commit. Read `AGENTS.md` and the active CI
-workflows to identify every required command and repository policy check. In
-this repository, run `pnpm install --frozen-lockfile` and `pnpm run validate` at
-minimum. Also validate workflow syntax and action-policy requirements, such as
-full-length commit SHA pinning, because test commands do not cover job setup
-failures.
+Read `AGENTS.md` and run the narrowest checks that cover the exact changes
+intended for the commit. Use `pnpm install --frozen-lockfile` and
+`pnpm run validate` for broad site, dependency, CI, or deployment changes; do
+not impose the full browser suite on an isolated documentation or skill edit.
+For workflow changes, also validate the YAML and repository action policies,
+including full-length commit SHA pinning, because test commands do not cover job
+setup failures.
 
-Treat this as a mandatory gate for every commit, not only broad changes. If any
-local CI-equivalent check fails, or the exact commit contents cannot be
-validated, stop before committing and report the blocker. Do not hide failures
-with `--no-verify` or continue because a failure appears unrelated.
+Do not hide failures with `--no-verify`. Fix failures caused by the scoped work
+and report unrelated failures without absorbing them.
 
 ## Stage and inspect
 

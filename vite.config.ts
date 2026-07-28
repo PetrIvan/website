@@ -54,8 +54,7 @@ function addFootnoteHeading() {
 
 export default defineConfig({
 	server: {
-		port: 1420,
-		strictPort: true
+		port: 1420
 	},
 	plugins: [
 		enhancedImages(),
