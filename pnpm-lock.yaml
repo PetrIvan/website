@@ -78,8 +78,8 @@ importers:
         specifier: ^0.8.0
         version: 0.8.1(prettier-plugin-svelte@4.1.1(prettier@3.9.5)(svelte@5.56.6(@typescript-eslint/types@8.64.0)))(prettier@3.9.5)
       remark-footnotes:
-        specifier: 2.0.0
-        version: 2.0.0
+        specifier: 5.0.0
+        version: 5.0.0
       svelte:
         specifier: ^5.56.1
         version: 5.56.6(@typescript-eslint/types@8.64.0)
@@ -1385,8 +1385,9 @@ packages:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
 
-  remark-footnotes@2.0.0:
-    resolution: {integrity: sha512-3Clt8ZMH75Ayjp9q4CorNeyjwIxHFcTkaektplKGl2A1jNGEUey8cKL0ZC5vJwfcD5GFGsNLImLG/NGzWIzoMQ==}
+  remark-footnotes@5.0.0:
+    resolution: {integrity: sha512-bmRA8Xel4YZA5PphUOdamG3Cf3BshoGZQlwVqF+bv0Ei1/b9ETOSyoKtpVAk8zIRJ2dAwio2HFnbC9wjLmy02A==}
+    deprecated: 'Deprecated: use `remark-gfm`'
 
   rolldown@1.1.5:
     resolution: {integrity: sha512-t9z29cJjXf/vxQ8dyhCSpt6H6aSwHTk8cT5I3iy6SMXuFpk5mB6PL6XfC8PCwrPTx93udwKUm9HRteAlTGBLiA==}
@@ -2722,7 +2723,7 @@ snapshots:
 
   readdirp@4.1.2: {}
 
-  remark-footnotes@2.0.0: {}
+  remark-footnotes@5.0.0: {}
 
   rolldown@1.1.5:
     dependencies:
