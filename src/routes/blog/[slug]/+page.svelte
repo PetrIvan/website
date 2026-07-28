@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import arrowLeftIcon from '@fluentui/svg-icons/icons/arrow_left_24_filled.svg?raw';
 	import FluentIcon from '$lib/components/icons/FluentIcon.svelte';
 	import PageMetadata from '$lib/components/site/PageMetadata.svelte';
@@ -8,6 +9,27 @@
 
 	let { data }: { data: PageData } = $props();
 	let proseRoot = $state<HTMLDivElement>();
+	const articleUrl = $derived(`https://petrivan.com${page.url.pathname}`);
+	const articleStructuredData = $derived(
+		JSON.stringify({
+			'@context': 'https://schema.org',
+			'@type': 'BlogPosting',
+			headline: data.metadata.title,
+			description: data.metadata.description,
+			datePublished: data.metadata.date,
+			url: articleUrl,
+			mainEntityOfPage: articleUrl,
+			image: 'https://petrivan.com/social-card.png',
+			author: {
+				'@type': 'Person',
+				name: 'Petr Ivan',
+				url: 'https://petrivan.com/'
+			}
+		}).replaceAll('<', '\\u003c')
+	);
+	const articleStructuredDataMarkup = $derived(
+		`<script type="application/ld+json">${articleStructuredData}<` + '/script>'
+	);
 
 	$effect(() => {
 		const root = proseRoot;
@@ -215,6 +237,12 @@
 		};
 	});
 </script>
+
+<svelte:head>
+	<!-- Structured data is serialized from trusted local blog metadata. -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html articleStructuredDataMarkup}
+</svelte:head>
 
 <PageMetadata
 	title={`${data.metadata.title} · Petr Ivan`}

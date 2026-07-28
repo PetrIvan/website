@@ -39,6 +39,10 @@ for (const route of routes) {
 			`https://petrivan.com${route}`
 		);
 		await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+		await expect(page.locator('link[rel="alternate"][type="application/rss+xml"]')).toHaveAttribute(
+			'href',
+			'https://petrivan.com/feed.xml'
+		);
 
 		if (testInfo.project.name === 'chromium-desktop') {
 			const accessibilityScan = await new AxeBuilder({ page }).analyze();
@@ -53,6 +57,23 @@ test('blog articles include their prerendered body', async ({ page }) => {
 	await expect(page.locator('.article-prose')).toContainText(
 		'A token is primarily a unit of global computation'
 	);
+});
+
+test('blog articles expose BlogPosting structured data', async ({ page }) => {
+	await page.goto('/blog/token-boundaries/');
+
+	const structuredData = await page
+		.locator('script[type="application/ld+json"]')
+		.evaluateAll((scripts) => scripts.map((script) => JSON.parse(script.textContent ?? '{}')));
+	const article = structuredData.find((entry) => entry['@type'] === 'BlogPosting');
+
+	expect(article).toMatchObject({
+		'@context': 'https://schema.org',
+		'@type': 'BlogPosting',
+		headline: 'What Should Count as a Transformer Token?',
+		datePublished: '2026-07-27',
+		url: 'https://petrivan.com/blog/token-boundaries/'
+	});
 });
 
 test('footnote previews follow keyboard focus', async ({ page }) => {
@@ -78,6 +99,18 @@ test('sitemap contains every public route', async ({ request }, testInfo) => {
 	for (const route of routes) {
 		expect(sitemap).toContain(`<loc>https://petrivan.com${route}</loc>`);
 	}
+});
+
+test('RSS feed advertises every blog post', async ({ request }, testInfo) => {
+	test.skip(testInfo.project.name !== 'chromium-desktop', 'Covered once in Chromium');
+	const response = await request.get('/feed.xml');
+	expect(response.ok()).toBe(true);
+	expect(response.headers()['content-type']).toMatch(/\b(?:application\/rss\+xml|text\/xml)\b/);
+	const feed = await response.text();
+
+	expect(feed).toContain('<atom:link href="https://petrivan.com/feed.xml"');
+	expect(feed).toContain('<link>https://petrivan.com/blog/token-boundaries/</link>');
+	expect(feed).toContain('<title>What Should Count as a Transformer Token?</title>');
 });
 
 test('internal links resolve', async ({ page, request }, testInfo) => {

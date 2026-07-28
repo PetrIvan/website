@@ -14,6 +14,12 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<link
+		rel="alternate"
+		type="application/rss+xml"
+		title="Petr Ivan"
+		href="https://petrivan.com/feed.xml"
+	/>
 	<meta name="author" content="Petr Ivan" />
 	<meta property="og:site_name" content="Petr Ivan" />
 	<meta property="og:locale" content="en_GB" />
