@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { readFile } from 'node:fs/promises';
 
@@ -12,6 +12,24 @@ const routes = [
 	'/blog/',
 	'/blog/token-boundaries/'
 ] as const;
+
+async function clickHeaderLink(page: Page, isMobile: boolean, name: string) {
+	if (name === 'Petr Ivan') {
+		await page.getByRole('banner').getByRole('link', { name, exact: true }).click();
+		return;
+	}
+
+	if (isMobile) {
+		await page.getByRole('button', { name: 'Open navigation menu' }).click();
+		await page.getByRole('dialog').getByRole('link', { name, exact: true }).click();
+		return;
+	}
+
+	await page
+		.getByRole('navigation', { name: 'Primary navigation' })
+		.getByRole('link', { name, exact: true })
+		.click();
+}
 
 for (const route of routes) {
 	test(`${route} renders without browser errors or horizontal overflow`, async ({
@@ -74,6 +92,108 @@ test('blog articles expose BlogPosting structured data', async ({ page }) => {
 		datePublished: '2026-07-27',
 		url: 'https://petrivan.com/blog/token-boundaries/'
 	});
+});
+
+test('primary navigation works after opening a blog article from the home page', async ({
+	page,
+	isMobile
+}) => {
+	const errors: string[] = [];
+	page.on('console', (message) => {
+		if (message.type() === 'error') errors.push(message.text());
+	});
+	page.on('pageerror', (error) => errors.push(error.message));
+
+	await page.goto('/');
+	await page.getByRole('link', { name: /What Should Count as a Transformer Token/ }).click();
+	await expect(page).toHaveURL('/blog/token-boundaries/');
+
+	await clickHeaderLink(page, isMobile, 'Projects');
+
+	await expect(page).toHaveURL('/projects/');
+	await expect(page.getByRole('heading', { level: 1, name: 'Projects' })).toBeVisible();
+	expect(errors).toEqual([]);
+});
+
+test('primary navigation works across every route type', async ({ page, isMobile }, testInfo) => {
+	test.skip(testInfo.project.name !== 'chromium-desktop', 'Covered once in Chromium');
+	const errors: string[] = [];
+	page.on('console', (message) => {
+		if (message.type() === 'error') errors.push(message.text());
+	});
+	page.on('pageerror', (error) => errors.push(error.message));
+	const transitions = [
+		{
+			from: '/projects/',
+			link: 'Blog',
+			to: '/blog/',
+			heading: 'Blog'
+		},
+		{
+			from: '/projects/ai-cup-2026/',
+			link: 'About',
+			to: '/about/',
+			heading: 'About'
+		},
+		{
+			from: '/blog/',
+			link: 'Projects',
+			to: '/projects/',
+			heading: 'Projects'
+		},
+		{
+			from: '/about/',
+			link: 'Petr Ivan',
+			to: '/',
+			heading: 'I build machine learning systems and the products around them.'
+		}
+	] as const;
+
+	for (const transition of transitions) {
+		await page.goto(transition.from);
+		await clickHeaderLink(page, isMobile, transition.link);
+		await expect(page).toHaveURL(transition.to);
+		await expect(page.getByRole('heading', { level: 1, name: transition.heading })).toBeVisible();
+	}
+
+	expect(errors).toEqual([]);
+});
+
+test('client navigation recovers when a deployment replaced a route asset', async ({
+	page,
+	isMobile
+}) => {
+	let blockedRouteAsset = false;
+	const documentRequests: string[] = [];
+	page.on('request', (request) => {
+		if (request.resourceType() === 'document') {
+			documentRequests.push(new URL(request.url()).pathname);
+		}
+	});
+
+	await page.goto('/');
+	await page.getByRole('link', { name: /What Should Count as a Transformer Token/ }).click();
+	await expect(page).toHaveURL('/blog/token-boundaries/');
+	await page.route(/\/_app\/immutable\/nodes\/\d+\.[^/]+\.js$/, async (route) => {
+		if (blockedRouteAsset) {
+			await route.continue();
+			return;
+		}
+
+		blockedRouteAsset = true;
+		await route.abort('failed');
+	});
+
+	await clickHeaderLink(page, isMobile, 'Projects');
+
+	await expect(page).toHaveURL('/projects/');
+	await expect(page.getByRole('heading', { level: 1, name: 'Projects' })).toBeVisible();
+	await page.waitForLoadState('load');
+	expect(blockedRouteAsset).toBe(true);
+	expect(documentRequests).toEqual(['/', '/projects/']);
+	await expect
+		.poll(() => page.evaluate(() => sessionStorage.getItem('petrivan:deployment-asset-recovery')))
+		.toBeNull();
 });
 
 test('footnote previews follow keyboard focus', async ({ page }) => {

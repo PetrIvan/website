@@ -1,8 +1,10 @@
 <script lang="ts">
 	import '@fontsource-variable/figtree/wght.css';
 	import '@fontsource-variable/figtree/wght-italic.css';
+	import { onMount } from 'svelte';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
+	import { clearDeploymentAssetRecovery } from '$lib/client/deploymentAssetRecovery';
 	import SiteFooter from '$lib/components/site/SiteFooter.svelte';
 	import SiteHeader from '$lib/components/site/SiteHeader.svelte';
 
@@ -10,6 +12,8 @@
 		'Petr Ivan, machine learning engineer, with the text: I build machine learning systems and the products around them.';
 
 	let { children } = $props();
+
+	onMount(clearDeploymentAssetRecovery);
 </script>
 
 <svelte:head>
