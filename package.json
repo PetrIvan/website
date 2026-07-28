@@ -31,7 +31,7 @@
 		"test:e2e": "pnpm run build && playwright test",
 		"test:visual": "pnpm run build && playwright test --config playwright.visual.config.ts",
 		"test": "vitest run",
-		"validate": "pnpm run lint && pnpm run skills:validate && pnpm run check && pnpm run test && pnpm run test:e2e"
+		"validate": "pnpm run lint && pnpm run skills:validate && pnpm run resume:build && pnpm run check && pnpm run test && pnpm run test:e2e"
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.12.1",

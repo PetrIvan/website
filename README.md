@@ -30,8 +30,8 @@ Project pages are typed content records. Blog posts are `.svx` files with
 
 ## Development
 
-The project requires Node.js 22.12 or newer and pnpm 10.17.1. Install the
-Playwright engines before running the complete validation suite.
+The project requires Node.js 22.12 or newer, pnpm 10.17.1, and Typst 0.14.2.
+Install the Playwright engines before running the complete validation suite.
 
 ```powershell
 pnpm install
@@ -50,7 +50,7 @@ pnpm run dev
 | `pnpm run build`        | Generate public assets and write the site to `build/`          |
 | `pnpm run preview`      | Serve the production build locally                             |
 | `pnpm run validate`     | Run the complete local verification suite                      |
-| `pnpm run resume:build` | Rebuild the downloadable résumé with Typst 0.14 or newer       |
+| `pnpm run resume:build` | Rebuild the downloadable résumé with Typst 0.14.2              |
 
 ## Build and verification
 
@@ -58,10 +58,9 @@ pnpm run dev
 social card and canonical public portrait copy before building the site. The
 source images and generation script are tracked for reproducible CI builds.
 
-The résumé PDF is generated separately with deterministic PDF metadata. Run
-`pnpm run resume:build` after changing `resume/resume.typ`, its fonts, or its
-local assets. CI rebuilds the PDF and verifies that the committed copy is
-current.
+The résumé PDF is rebuilt during `pnpm run validate`. CI compiles it before the
+site build, so the deployed site contains the PDF generated in the same Ubuntu
+environment as the rest of the production output.
 
 The [Visual review workflow](.github/workflows/visual-review.yml) runs weekly
 and on demand. It captures representative pages in light and dark themes at

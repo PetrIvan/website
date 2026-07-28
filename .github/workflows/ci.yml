@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
 
     steps:
@@ -29,8 +29,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: 22
+          node-version: 22.16.0
           cache: pnpm
+
+      - name: Set up Typst
+        uses: typst-community/setup-typst@48aeee7543d37f01afd1ffb27307dc277387ba13 # v4
+        with:
+          typst-version: 0.14.2
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -55,31 +60,10 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  resume:
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-
-      - name: Set up Typst
-        uses: typst-community/setup-typst@48aeee7543d37f01afd1ffb27307dc277387ba13 # v4
-        with:
-          typst-version: 0.14.2
-
-      - name: Rebuild résumé
-        run: typst compile --creation-timestamp 0 --font-path resume/fonts resume/resume.typ static/petr-ivan-resume.pdf
-
-      - name: Verify generated résumé
-        run: git diff --exit-code -- static/petr-ivan-resume.pdf
-
   deploy:
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs:
-      - validate
-      - resume
-    runs-on: ubuntu-latest
+    needs: validate
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       actions: read
