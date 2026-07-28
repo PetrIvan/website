@@ -1,0 +1,17 @@
+{
+	"file_types": {
+		"Markdown": ["svx"]
+	},
+	"languages": {
+		"Markdown": {
+			"formatter": "prettier",
+			"format_on_save": "on",
+			"preferred_line_length": 100
+		},
+		"Svelte": {
+			"formatter": "prettier",
+			"format_on_save": "on",
+			"preferred_line_length": 100
+		}
+	}
+}

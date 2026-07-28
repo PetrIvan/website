@@ -1,7 +1,6 @@
 ---
 name: commit
-description: Create scoped conventional commits from approved changes and push them.
-disable-model-invocation: true
+description: Create scoped conventional commits from approved changes, validate them, and push.
 ---
 
 This is a Claude Code compatibility wrapper.

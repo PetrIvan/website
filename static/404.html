@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex" />
+		<meta name="theme-color" content="#f4efe6" />
+		<title>Page not found · Petr Ivan</title>
+		<script>
+			(() => {
+				const root = document.documentElement;
+				let storedTheme = null;
+
+				try {
+					storedTheme = localStorage.getItem('theme');
+				} catch {
+					// Fall back to the system preference when storage is unavailable.
+				}
+
+				const theme =
+					storedTheme === 'light' || storedTheme === 'dark'
+						? storedTheme
+						: window.matchMedia('(prefers-color-scheme: dark)').matches
+							? 'dark'
+							: 'light';
+
+				root.dataset.theme = theme;
+				root.style.colorScheme = theme;
+				document
+					.querySelector('meta[name="theme-color"]')
+					?.setAttribute('content', theme === 'dark' ? '#211c18' : '#f4efe6');
+			})();
+		</script>
+		<style>
+			:root {
+				--background: #f4efe6;
+				--foreground: #28231f;
+				--muted: #71675e;
+				--border: #d8cec0;
+				--accent: #845044;
+				color-scheme: light;
+				font-family:
+					Figtree,
+					system-ui,
+					-apple-system,
+					BlinkMacSystemFont,
+					'Segoe UI',
+					sans-serif;
+				color: var(--foreground);
+				background: var(--background);
+			}
+
+			:root[data-theme='dark'] {
+				--background: #211c18;
+				--foreground: #f4eadf;
+				--muted: #b9aa9d;
+				--border: #463a31;
+				--accent: #db9582;
+				color-scheme: dark;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				min-height: 100vh;
+				margin: 0;
+				color: var(--foreground);
+				background: var(--background);
+			}
+
+			header {
+				border-bottom: 1px solid var(--border);
+			}
+
+			header div,
+			main {
+				width: min(100% - 3rem, 68rem);
+				margin-inline: auto;
+			}
+
+			header div {
+				display: flex;
+				height: 4.5rem;
+				align-items: center;
+			}
+
+			a {
+				color: inherit;
+				font-weight: 500;
+				text-decoration: none;
+			}
+
+			main {
+				display: grid;
+				min-height: calc(100vh - 4.5rem);
+				place-items: center;
+				padding-block: 4rem;
+				text-align: center;
+			}
+
+			.status {
+				margin: 0;
+				color: var(--accent);
+				font-size: 0.875rem;
+				font-weight: 500;
+			}
+
+			h1 {
+				margin: 1rem 0 0;
+				font-size: clamp(2.5rem, 7vw, 3rem);
+				font-weight: 500;
+				line-height: 1.1;
+				letter-spacing: -0.045em;
+			}
+
+			.message {
+				max-width: 32rem;
+				margin: 1.25rem 0 0;
+				color: var(--muted);
+				font-size: 1.125rem;
+				line-height: 1.75;
+			}
+
+			.actions {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.75rem;
+				margin-top: 2rem;
+			}
+
+			.actions a {
+				display: inline-flex;
+				min-height: 2.75rem;
+				align-items: center;
+				justify-content: center;
+				padding: 0.625rem 1.25rem;
+				border: 1px solid var(--border);
+				border-radius: 0.375rem;
+				font-size: 0.875rem;
+			}
+
+			.actions .primary {
+				border-color: var(--foreground);
+				color: var(--background);
+				background: var(--foreground);
+			}
+
+			.actions a:hover,
+			.actions a:focus-visible {
+				border-color: var(--accent);
+				color: var(--accent);
+			}
+
+			.actions .primary:hover,
+			.actions .primary:focus-visible {
+				color: var(--background);
+				background: var(--accent);
+			}
+
+			:focus-visible {
+				outline: 0.1875rem solid var(--accent);
+				outline-offset: 0.1875rem;
+			}
+		</style>
+	</head>
+	<body>
+		<header><div><a href="/">Petr Ivan</a></div></header>
+		<main>
+			<div>
+				<p class="status">404</p>
+				<h1>Page not found</h1>
+				<p class="message">The address may be wrong, or the page may have moved.</p>
+				<nav class="actions" aria-label="Error page links">
+					<a class="primary" href="/">Return home</a>
+					<a href="/blog/">Browse writing</a>
+				</nav>
+			</div>
+		</main>
+	</body>
+</html>

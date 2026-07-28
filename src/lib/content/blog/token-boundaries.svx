@@ -1,0 +1,168 @@
+---
+title: 'What Should Count as a Transformer Token?'
+description: 'Choosing which information deserves independent global computation.'
+date: 2026-07-27
+---
+
+Imagine you are tasked with building a Transformer model to process audio clips. Each clip is a few
+seconds long at a sample rate of 44.1 kHz. Before you can start training your model, you encounter a
+problem -- feeding each float value as a separate token[^1] would result in a sequence that is far
+too long.
+
+You therefore need a coarser unit. A simple approach would be to take a local frame of several audio
+samples and treat them as a single token. You could also
+[quantize the waveform into discrete codec tokens](https://arxiv.org/abs/2408.16532),
+[split a spectrogram into patches](https://arxiv.org/abs/2207.06405), or
+[compress the waveform into continuous autoencoder latents](https://arxiv.org/abs/2402.04825). Each
+choice produces a sequence that is manageable for a global Transformer.
+
+Audio is not a special case that suffers from excessive token length. In practice, every system has
+to make some trade-off between the granularity of the tokens and the length of the global sequence.
+In some modalities, it is not obvious at all what a token should represent. This leads us to ask
+which information deserves its own token in the global sequence.
+
+## Tokens as units of global computation
+
+It might be tempting to think of a token as a semantic unit of information. While regular patching
+often works well in images and audio, there are often no clear boundaries or natural groupings
+available for our modality. Even in those cases, patching may still be useful.
+
+Audio frames are a local grouping, yet they are not fully semantic: they do not follow natural
+boundaries and may, for example, split a vowel across two tokens. Yet they are still a very useful
+abstraction that [tends to work well in practice](https://arxiv.org/abs/2006.11477).
+
+Point clouds and particle systems are less convenient examples. Their elements form sets, so the
+input has no canonical sequence order. One point or particle per token preserves independent
+addressability, but it can make the global sequence excessive. Packing several into one token
+shortens the sequence, but the local projection must retain which coordinates, types, and other
+fields belong to each element.
+
+A token is primarily a unit of global computation. It determines which information is processed
+together within a position and which information can interact independently through global
+attention. Stacking Transformer layers alternates token-wise processing with exchange between
+positions, allowing globally mixed information to be refined locally before the next round of
+interaction.[^2] The number of positions remains fixed, so the token boundary continues to determine
+how compute is divided between token-wise operations, which scale linearly with sequence length, and
+pairwise attention, which scales quadratically under dense attention.
+
+## Why locality is a useful prior
+
+If tokens are a measure of computation, why does the setup so often exploit locality? It comes down
+to efficiency.
+
+Local values are often redundant. The initial projection or a dedicated local encoder can combine
+the values within each patch and retain the features needed by the global model, rather than
+assigning every raw value an independent sequence position. Locality is useful because nearby values
+often share structure, making this compression easier and allowing the same computation to be reused
+across patches.
+
+In modalities such as audio and image processing, this local stage handles short-range structure
+within each patch, while global attention handles interactions between patches. Once a patch has
+been represented by a token, the Transformer FFN continues to process it independently at each
+position, but it no longer has direct access to information discarded during tokenization.
+
+Similar arguments can be made for semantic groupings, as is the case in symbolic music processing.
+For example, a note is a collection of pitch, onset, duration, instrument, and other attributes that
+define its sound, and together they have some degree of redundancy.[^3]
+[Representing a note as a single token](https://arxiv.org/abs/2505.15559) allows the model to
+capture this redundancy and reuse the same processing across many notes.
+
+## Grouping without a natural patch
+
+But even when there is no clean local or semantic unit, it may still be worth trying to group values
+together. This is particularly useful when the length of the raw sequence would make attention
+computationally infeasible. Common examples are modalities that have set semantics, such as point
+clouds, collections of detected objects, or particles in a physical simulation. Their order is not
+meaningful, and the number of elements can be large enough that full self-attention is expensive.
+
+Multiple strategies for grouping exist. One option is to impose a serialization and divide it into
+blocks anyway. The blocks do not need to correspond to semantic objects as long as the distinctions
+required by the target are preserved. For unordered data, the serialization can be canonicalized to
+make it repeatable, or varied during training so the model learns not to depend on any one order.
+[Point-cloud patch tokenization](https://arxiv.org/abs/2305.11487) can use spatial structure to turn
+local groups into tokens, while [entropy-based grouping](https://arxiv.org/abs/2412.09871) can use
+shorter groups where the input is less predictable and longer groups where it is more redundant.
+
+While local grouping is usually the strongest prior, it is not a strict requirement.
+
+## Choosing the token granularity
+
+A natural question is what the ideal token size should be. At one extreme, representing a single
+value with a token is often too impractical. One might also consider what happens as you pack more
+and more information into a single token.
+
+Increasing the token size clearly leads to fewer global positions and cheaper attention, but it also
+places more responsibility on the local encoder. Similarly, in sequence modelling setups, it puts
+more pressure on the final decoder, since
+[each global token may need to be expanded into several local outputs](https://arxiv.org/abs/2305.07185).[^4]
+
+One clear bottleneck appears when a direct linear patch projection maps more input values into a
+token than the width of the model. The projection must then discard some directions in the
+input.[^5] Whether this removes useful information depends on which distinctions the target
+requires.
+[An image classifier can project each 16 by 16 RGB patch from 768 values into a 192-dimensional token](https://arxiv.org/abs/2012.12877)
+because it only needs to retain information relevant to the class label. In contrast,
+[a flow-matching Transformer operating on 768-dimensional representation tokens struggled when its hidden width remained below the token dimension](https://arxiv.org/abs/2510.11690),
+where the model must predict a velocity value in every latent dimension. The relevant limit is
+therefore the number of target-relevant degrees of freedom, not the raw number of input values.
+Comparing the number of values with the model width is only a sanity check: performance can degrade
+before this point when the required distinctions are difficult to extract, or remain strong beyond
+it when the target does not depend on the discarded variation.
+
+A practical approach is to sweep a few group sizes and monitor how performance changes per FLOP. For
+an initial global-token budget, choose a sequence length where the pairwise attention operations and
+token-wise linear operations of the Transformer are in a similar compute range.[^6] Then choose
+enough values per token to keep the raw context within that budget and explore nearby packing sizes.
+In general, you should aim to retain as much detail as the task requires while maintaining a
+reasonable amount of compute.
+
+## What the boundary decides
+
+Choosing the token granularity determines the balance between global attention and local processing.
+The goal is not to find a uniquely correct tokenization for the modality. It is to decide which
+information needs its own position in the global sequence, which can be combined by the local
+encoder before global processing, and which can be reconstructed by the decoder afterwards.
+
+For the audio model, the answer may be a fixed number of waveform samples, a spectrogram patch, or a
+learned codec representation. None is universally correct. Each places the boundary between cheap
+local processing and expensive global interaction somewhere else. Choosing a token boundary is
+therefore choosing how the model allocates its computation.
+
+[^1]:
+    When referring to a token, I mean a single vector processed as one element of the global
+    Transformer sequence. It does not have to be discrete, semantic, or naturally present in the
+    data.
+
+[^2]:
+    Self-attention lets every token incorporate information from other positions. The following
+    position-wise feed-forward block then transforms that mixed representation independently at each
+    position. Stacking layers therefore alternates global exchange with per-position processing,
+    while leaving the number of sequence positions fixed.
+
+[^3]:
+    Pitch register is an intuitive example of this redundancy, as it narrows the range of plausible
+    instruments: a bass cannot produce the highest piano pitches, for example.
+
+[^4]:
+    Even when the task is to predict the continuation of the same sequence, the observed and
+    predicted sides do not have to use the same granularity. The history can be compressed into
+    large input patches, while each predicted global token seeds a hierarchical decoder that emits
+    the next patch one value at a time. Alternatively, the global model can predict a compressed
+    code for the next patch and a codec, diffusion, or flow decoder can reconstruct all of its
+    values jointly. The model remains autoregressive across patches, but the original sequence is
+    never unrolled into one global position per value.
+
+[^5]:
+    For a purely linear projection from p input values to width d, p > d guarantees that the map
+    cannot be one-to-one over the whole input space. Real data may occupy a lower-dimensional
+    manifold, so this is a sanity check rather than a universal limit.
+
+[^6]:
+    To make this rule of thumb concrete, consider a Transformer stack with 16 layers, width d =
+    1,024, and a standard MLP that expands to 4,096 units. Its attention and MLP weights add up to
+    roughly 201M parameters. With 8,192 global positions, the pairwise attention operations cost
+    about 137 billion multiply-adds per layer, compared with about 103 billion for the linear
+    projections, putting the two in a similar compute range. For this setup, I would use 8,192 as
+    the initial global-token budget: divide the chosen raw context length by 8,192 and round up to
+    get the starting number of values per token. A context containing 131,072 values would therefore
+    start at 16 values per token, after which nearby packing sizes can be compared.

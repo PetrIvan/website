@@ -1,13 +1,55 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
+@property --background {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #f4efe6;
+}
+
+@property --surface {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #fcf8f1;
+}
+
+@property --foreground {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #28231f;
+}
+
+@property --muted {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #71675e;
+}
+
+@property --border {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #d8cec0;
+}
+
+@property --accent {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #845044;
+}
+
 :root {
 	--background: #f4efe6;
 	--surface: #fcf8f1;
 	--foreground: #28231f;
 	--muted: #71675e;
 	--border: #d8cec0;
-	--accent: #78463b;
+	--accent: #845044;
+	--color-transition-duration: 180ms;
+	--color-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+	transition-property: --background, --surface, --foreground, --muted, --border, --accent;
+	transition-duration: var(--color-transition-duration);
+	transition-timing-function: var(--color-transition-easing);
+	transition-delay: 0ms;
 
 	font-family:
 		'Figtree Variable',
@@ -21,6 +63,7 @@
 	color: var(--foreground);
 	background: var(--background);
 	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
 }
 
 :root[data-theme='dark'] {
@@ -44,13 +87,37 @@
 
 html {
 	min-width: 20rem;
+	scrollbar-gutter: stable;
 	background: var(--background);
 }
 
 body {
 	min-height: 100vh;
 	margin: 0;
+	color: var(--foreground);
 	background: var(--background);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+:root[data-theme-transitioning] *,
+:root[data-theme-transitioning] *::before,
+:root[data-theme-transitioning] *::after {
+	transition: none !important;
+}
+
+button,
+input,
+textarea,
+select {
+	font: inherit;
+}
+
+img {
+	display: block;
+	max-width: 100%;
 }
 
 button,
@@ -60,6 +127,20 @@ a {
 
 a {
 	color: inherit;
+	text-decoration-thickness: 0.08em;
+	text-underline-offset: 0.16em;
+}
+
+.prose-content a {
+	color: inherit;
+	text-decoration: underline;
+	text-decoration-color: currentColor;
+	transition: color var(--color-transition-duration) var(--color-transition-easing);
+}
+
+.prose-content a:hover,
+.prose-content a:focus-visible {
+	color: var(--accent);
 }
 
 :focus-visible {

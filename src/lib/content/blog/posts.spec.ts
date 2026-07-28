@@ -1,31 +1,24 @@
 import { describe, expect, it } from 'vitest';
 
-import { isVisiblePost, type BlogPostMetadata } from './posts';
+import { getPosts } from './posts.server';
+import { formatPostDate } from './posts';
 
-const publishedPost: BlogPostMetadata = {
-	title: 'Published',
-	description: 'A published post',
-	date: '2026-07-18',
-	draft: false
-};
-
-const draftPost: BlogPostMetadata = {
-	title: 'Draft',
-	description: 'A development-only post',
-	date: '2026-07-18',
-	draft: true
-};
-
-describe('isVisiblePost', () => {
-	it('includes published posts in production listings', () => {
-		expect(isVisiblePost(publishedPost, { includeDrafts: false })).toBe(true);
+describe('formatPostDate', () => {
+	it('formats ISO dates for display', () => {
+		expect(formatPostDate('2026-07-21')).toBe('21 July 2026');
 	});
 
-	it('excludes draft posts from production listings', () => {
-		expect(isVisiblePost(draftPost, { includeDrafts: false })).toBe(false);
-	});
+	it('keeps listing data limited to the slug and metadata', () => {
+		const post = getPosts().find((candidate) => candidate.slug === 'token-boundaries');
 
-	it('allows draft posts in development listings', () => {
-		expect(isVisiblePost(draftPost, { includeDrafts: true })).toBe(true);
+		expect(post).toEqual({
+			slug: 'token-boundaries',
+			metadata: {
+				title: 'What Should Count as a Transformer Token?',
+				description: 'Choosing which information deserves independent global computation.',
+				date: '2026-07-27'
+			}
+		});
+		expect(post).not.toHaveProperty('component');
 	});
 });

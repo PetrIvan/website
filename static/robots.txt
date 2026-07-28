@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: /
+Allow: /
 
-# Deliberately block indexing during private development.
-# Replace this file at public launch.
+Sitemap: https://petrivan.com/sitemap.xml

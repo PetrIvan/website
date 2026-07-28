@@ -1,12 +1,17 @@
 ---
 name: commit
-description: Create scoped conventional commits from approved local changes, validate them, and push when requested. Use only when the user explicitly asks to commit, invokes /commit or $commit, or clearly asks to ship approved work.
+description: Create scoped conventional commits from approved local changes, validate them, and push. Use only when the user explicitly asks to commit, invokes /commit or $commit, or clearly asks to ship approved work.
 ---
 
 # Commit Protocol
 
 Commit only changes that belong to the approved task. Preserve unrelated user
 or agent work, including already staged changes.
+
+A commit authorization always includes push authorization. Unless the user
+explicitly says not to push or to keep the commit local, this workflow is not
+complete until the current branch has been pushed successfully or a concrete
+push failure has been reported.
 
 ## Preconditions
 
@@ -66,7 +71,7 @@ messages. Never add co-author, generated-by, or agent attribution.
 
 ## Push
 
-Push only after all requested commits succeed:
+After all requested commits succeed, always push the current branch:
 
 ```powershell
 git push
@@ -77,6 +82,9 @@ If the branch has no upstream:
 ```powershell
 git push -u origin HEAD
 ```
+
+Do not wait for a separate push request and do not ask whether to push. The only
+exception is an explicit instruction not to push or to keep the commit local.
 
 Never force-push. If the remote advanced, fetch and inspect the divergence.
 Do not rebase, pull, reset, or stash shared work without explicit coordination.

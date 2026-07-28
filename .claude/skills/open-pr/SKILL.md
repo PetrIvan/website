@@ -1,7 +1,6 @@
 ---
 name: open-pr
 description: Open or update a GitHub pull request for the current branch.
-disable-model-invocation: true
 ---
 
 This is a Claude Code compatibility wrapper.

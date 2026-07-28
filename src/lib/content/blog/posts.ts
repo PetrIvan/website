@@ -2,13 +2,18 @@ export interface BlogPostMetadata {
 	title: string;
 	description: string;
 	date: string;
-	draft: boolean;
-	tags?: string[];
 }
 
-export function isVisiblePost(
-	metadata: BlogPostMetadata,
-	{ includeDrafts = import.meta.env.DEV }: { includeDrafts?: boolean } = {}
-): boolean {
-	return includeDrafts || !metadata.draft;
+export interface BlogPost {
+	slug: string;
+	metadata: BlogPostMetadata;
+}
+
+export function formatPostDate(date: string): string {
+	return new Intl.DateTimeFormat('en-GB', {
+		day: 'numeric',
+		month: 'long',
+		year: 'numeric',
+		timeZone: 'UTC'
+	}).format(new Date(`${date}T00:00:00Z`));
 }

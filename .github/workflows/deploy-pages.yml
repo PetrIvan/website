@@ -1,7 +1,9 @@
 name: Deploy GitHub Pages
 
-# Keep deployment manual during development. Add a push trigger for main at launch.
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -34,6 +36,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Install browser engines
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
 
       - name: Validate and build
         run: pnpm run validate

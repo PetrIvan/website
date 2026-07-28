@@ -1,223 +1,187 @@
 # AGENTS.md
 
-This file provides durable guidance for agents working in this repository.
-Source code, configuration, tests, and the current user request are authoritative.
-Inspect the repository before relying on architectural assumptions.
+This file contains durable instructions for agents working in this repository.
+The current user request, source code, configuration, and tests are authoritative.
 
-## Project Overview
+## Project
 
-This is Petr Ivan's personal website and blog. It is a fully static SvelteKit
-site intended for GitHub Pages at `https://petrivan.com`.
+This is Petr Ivan's personal website and blog at `https://petrivan.com`. It is a
+fully static SvelteKit site deployed to GitHub Pages.
 
-The site should feel personal, warm, comfortable, technically sharp, and
-unforced. It is a portfolio and place for exploratory writing, not a résumé
-converted into a website or a content-marketing exercise.
+The site should feel personal, warm, technically sharp, and unforced. It is a
+portfolio and a place for exploratory writing, not a résumé converted into a
+website or a content-marketing project.
 
-The implementation is the public source of truth. Keep internal planning and
-private source material outside the repository.
+Keep internal planning, private source material, credentials, account exports,
+and unpublished personal records outside the repository.
 
-## Quick Start
+## Start here
 
-Prerequisites:
+Requirements:
 
 - Node.js 22.12 or newer
 - pnpm 10.17.1
-
-Commands:
+- Playwright browser engines for end-to-end tests
+- Typst 0.14 or newer only when rebuilding the résumé PDF
 
 ```powershell
 pnpm install
+pnpm exec playwright install chromium firefox webkit
 pnpm run dev
-pnpm run format
-pnpm run lint
-pnpm run check
-pnpm run test
-pnpm run build
-pnpm run validate
 ```
 
-`pnpm run validate` is the default complete verification command.
+Use `pnpm run validate` for complete local verification. The README and
+`package.json` are the command reference.
 
-## Working Style
+## Scope and authorization
 
-Do not edit files, run formatters, or otherwise mutate the project when the user
-is only asking a question, researching options, requesting a review, or
-discussing tradeoffs. Start making changes when the request explicitly or
-contextually asks for implementation.
+- Treat questions, reviews, audits, research, and tradeoff discussions as
+  read-only unless the user also asks for changes.
+- When the user asks for a specific fix, implement that fix and the smallest
+  supporting changes needed to make it complete.
+- Do not turn a narrow request into a broad rewrite, redesign, cleanup, or
+  refactor. Make extensive changes only when the user explicitly asks for them.
+- An explicit implementation request is sufficient approval for changes within
+  its stated scope. Do not require a second approval for every individual edit.
+- Ask before making a consequential choice when the request leaves genuinely
+  different outcomes open and repository context does not resolve it.
+- Preserve unrelated and user-authored work. Do not clean, revert, stash, reset,
+  or absorb changes outside the task.
+- Prefer the smallest coherent implementation. Do not add abstractions,
+  dependencies, compatibility layers, or content systems before they solve a
+  current need.
 
-Plan non-trivial work before implementation. Preserve user changes and unrelated
-work. Do not clean up, revert, stash, reset, or absorb work you did not make.
+## Repository skills
 
-Prefer the smallest coherent implementation that establishes the intended
-architecture. Do not add abstractions, dependencies, compatibility layers, or
-content systems before they solve a current need.
+Canonical skills live in `.agents/skills/`; `.claude/skills/` contains thin
+compatibility wrappers.
 
-## Agent Configuration
+- Use `writing` for drafting, reviewing, or editing prose anywhere in the
+  repository, including site copy, posts, project write-ups, metadata, résumé
+  text, and documentation.
+- Use `commit` only when the user explicitly asks to commit or ship changes.
+- Use `open-pr` when the user asks to open, publish, refresh, or update a pull
+  request.
+- When the user names multiple skills, use them in the stated order.
+- Do not create additional project skills without explicit approval.
 
-- `AGENTS.md` is the canonical shared instruction file.
-- `CLAUDE.md` is a thin Claude Code compatibility shim that points here.
-- Canonical project skills live in `.agents/skills/`.
-- `.claude/skills/` contains compatibility wrappers only.
-- Project-local skills are limited to the `commit` and `open-pr` GitHub
-  workflows for now.
-- Use a skill only when its trigger conditions match the request.
-- When the user names multiple skills, execute them in the stated order.
-- Do not invent additional project skills without explicit approval.
+Validate canonical skills and their compatibility wrappers with:
 
-## Architecture
+```powershell
+pnpm run skills:validate
+```
+
+## Repository layout
 
 ```text
 src/
 ├── lib/
-│   ├── assets/          imported images and other build-processed assets
+│   ├── assets/          build-processed images, icons, fonts, and media
 │   ├── components/      reusable UI grouped by responsibility
-│   ├── content/         blog and project content plus content queries
-│   ├── styles/          shared style modules when global CSS is insufficient
-│   └── utils/           small framework-independent utilities
-└── routes/              SvelteKit pages, layouts, and prerendered endpoints
-static/                  files copied unchanged, including CNAME and robots.txt
+│   └── content/         blog posts, project records, and content queries
+└── routes/              pages, layouts, and prerendered endpoints
+static/                  public files copied unchanged into the build
+resume/                  Typst résumé source, fonts, and local assets
+scripts/                 deterministic asset and repository utilities
+tests/e2e/               Playwright browser tests
 ```
 
-Avoid a large undifferentiated component folder. When a feature grows, group its
-components, types, and utilities by responsibility.
+When a feature grows, group its components, types, and utilities by
+responsibility rather than expanding an undifferentiated component directory.
 
-## Static Hosting Invariants
+## Static hosting invariants
 
-- Use `@sveltejs/adapter-static`.
-- Keep the root route tree prerenderable.
-- Runtime-dependent server routes, actions, databases, and private server
-  environment variables are out of scope for GitHub Pages.
-- Prerendered `+server.ts` endpoints are allowed for artifacts such as RSS,
-  sitemap XML, or generated metadata.
-- Use trailing-slash output so nested routes work as static directory indexes.
-- `static/CNAME` must contain `petrivan.com`.
-- Do not add a repository-name base path; the custom apex domain is canonical.
-- Preserve `www.petrivan.com` as a redirect concern outside the static build.
+- Use `@sveltejs/adapter-static` and keep the root route tree prerenderable.
+- Runtime server routes, form actions, databases, and private server environment
+  variables are incompatible with GitHub Pages.
+- Prerendered `+server.ts` endpoints are allowed for static artifacts such as
+  sitemap XML or feeds.
+- Preserve trailing-slash output so nested routes work as directory indexes.
+- Keep `static/CNAME` set to `petrivan.com`; do not add a repository-name base
+  path.
+- Deployment from `main` and public indexing are enabled for the public site.
+  Do not disable either as a temporary development measure.
+- Treat `www.petrivan.com` redirection as infrastructure outside this static
+  build.
 
-During development, the Pages workflow is manual-only and `static/robots.txt`
-blocks indexing. At public launch, enable deployment from `main` and allow
-indexing together.
-
-## Svelte and TypeScript
+## Implementation conventions
 
 - Use Svelte 5 runes and strict TypeScript.
-- Prefer ordinary Svelte components and browser/platform APIs over unnecessary
-  state libraries.
-- Keep page data serializable and static-build safe.
+- Prefer ordinary components and browser APIs over unnecessary state libraries.
+- Keep page data serializable and safe for prerendering.
 - Use `$lib` imports for shared first-party modules.
 - Keep component props and content metadata explicitly typed.
 - Remove dead code instead of retaining compatibility shims.
-- Keep comments for non-obvious reasoning, not line-by-line narration.
+- Comment non-obvious reasoning, not line-by-line behavior.
 
-## Content
+## Visual and interaction principles
 
-- Author rich posts as `.svx` files through mdsvex.
-- The authoring experience should feel like Markdown with optional Svelte
-  components; do not require components for ordinary prose.
-- Use stable filenames/slugs and ISO `YYYY-MM-DD` dates.
-- Required initial frontmatter is `title`, `description`, `date`, and `draft`.
-- Labels or tags are optional and should not become redundant navigation.
-- Distinguish personal synthesis and exploration from claims of novelty.
-- Do not manufacture filler posts or inflate project notes into essays.
+- Use the existing tokens and typography defined in `src/routes/layout.css`;
+  do not duplicate their current values in documentation or components.
+- Preserve the warm editorial composition, generous typography, rounded content
+  surfaces, and flat header.
+- Use Figtree and import only the Fluent UI System Icons required by the
+  interface.
+- Keep interaction spatially static. Color feedback may transition, and the
+  mobile navigation drawer may slide over fixed page content; avoid decorative
+  movement, smooth scrolling, lifting, scaling, and layout shifts.
+- Keep the portrait visually unframed and consistent between Home and About:
+  after the introduction on narrow screens and beside the page header when
+  space permits. Keep crop and silhouette details in the portrait component.
+- Keep social and contact links in deliberate utility or footer areas.
+- Respect system theme, persistent manual override, reduced motion, and
+  no-flash theme initialization.
 
-Draft content may appear in development, but must be absent from production
-routes, indexes, feeds, sitemaps, metadata, search data, and generated assets.
-The current placeholder post is development scaffolding and must never be
-published.
+## Assets, accessibility, and privacy
 
-## Visual System
-
-Use the established tokens from `src/routes/layout.css`:
-
-| Role       | Light     | Dark      |
-| ---------- | --------- | --------- |
-| Background | `#f4efe6` | `#211c18` |
-| Surface    | `#fcf8f1` | `#2b241f` |
-| Text       | `#28231f` | `#f4eadf` |
-| Muted      | `#71675e` | `#b9aa9d` |
-| Border     | `#d8cec0` | `#463a31` |
-| Accent     | `#78463b` | `#db9582` |
-
-- Use Figtree as the primary typeface.
-- Use Fluent UI System Icons in the 24px Filled style.
-- Prefer warm editorial composition, generous typography, rounded content
-  surfaces, and a flat header separated by a line.
-- Avoid outline-only icon treatments, dashboard-like card grids, large pill
-  navigation, a separate "Now" widget, and awkward hero social links.
-- Keep social and contact links in a deliberate footer or utility area.
-- Evaluate and present desktop and mobile designs separately, with mobile below
-  desktop rather than squeezed beside it.
-- Respect the system theme, allow a persistent manual override, and avoid a
-  flash of the wrong theme.
-
-## Images and Icons
-
-- Put build-processed local images in `src/lib/assets/` and import them.
-- Use `@sveltejs/enhanced-img` for raster content images.
-- Keep descriptive source filenames independent of a particular UI slot.
+- Put build-processed local assets in `src/lib/assets/` and import them. Use
+  `@sveltejs/enhanced-img` for raster content images.
 - Preserve original source images and control display crops in components.
-- Always provide appropriate alt text; use empty alt text only for genuinely
-  decorative images.
-- Import only the Fluent icons used by the interface.
-- Keep third-party notices current when adding or replacing assets.
+- Give informative images useful alt text and decorative images empty alt text.
+- Keep third-party notices and license files current when assets change.
+- Verify that new source photographs contain no sensitive metadata before
+  committing them.
+- Use semantic landmarks and heading order, keyboard-operable interactions,
+  visible focus states, and labels for icon-only controls.
+- Do not rely on color alone. Test narrow widths, long labels, text zoom, both
+  themes, and reduced motion where relevant.
 
-## Accessibility and Responsive Behavior
-
-- Use semantic landmarks and heading order.
-- Ensure all interactive behavior works with a keyboard.
-- Keep visible, high-contrast focus states.
-- Do not rely on color alone to communicate meaning.
-- Respect `prefers-reduced-motion`.
-- Maintain comfortable reading widths and line heights for long-form content.
-- Test narrow mobile widths, text zoom, and long labels.
-- Controls that only display an icon need an accessible name.
-
-## Analytics and Privacy
-
-Umami is the selected analytics provider, but it is not enabled during
-development. When added:
-
-- load it only in production;
-- keep its site identifier in public build configuration, never pretend it is a
-  secret;
-- avoid collecting local and preview traffic;
-- keep the integration isolated so it can be removed or replaced easily;
-- document any custom events before adding them.
-
-Never commit secrets, access tokens, account exports, unpublished personal
-records, environment files, internal planning, or private source material. The
-tracked profile portrait has been scrubbed of EXIF metadata; verify the same for
-future source photographs.
+Umami is the selected analytics provider. If enabled, load it only in
+production, keep its public site identifier in public build configuration, avoid
+local and preview traffic, and document custom events.
 
 ## Verification
 
 Use the narrowest checks that cover the change:
 
-| Change                                          | Default verification                                        |
-| ----------------------------------------------- | ----------------------------------------------------------- |
-| Svelte, TypeScript, content loading             | `pnpm run check` and `pnpm run test`                        |
-| Styles or layout                                | `pnpm run check`, then inspect desktop and mobile rendering |
-| Static routes, metadata, assets, adapter config | `pnpm run build` and inspect `build/`                       |
-| Dependencies or CI                              | `pnpm install --frozen-lockfile` and `pnpm run validate`    |
-| Docs, agent instructions, skills                | validate links/commands; run skill validator for skills     |
+| Change                                                    | Verification                                                                                             |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Svelte, TypeScript, content loading                       | `pnpm run check` and `pnpm run test`                                                                     |
+| Styles, layout, or interaction                            | `pnpm run check`, `pnpm run test:e2e`, and visual inspection in both themes at desktop and mobile widths |
+| Static routes, metadata, assets, or adapter configuration | `pnpm run build` and inspect `build/`                                                                    |
+| Résumé source or content                                  | `pnpm run resume:build`, render the PDF, and inspect it                                                  |
+| Dependencies, CI, or deployment                           | `pnpm install --frozen-lockfile` and `pnpm run validate`                                                 |
+| Documentation or agent instructions                       | validate links and commands, then run Prettier in check mode on affected files                           |
+| Skills                                                    | `pnpm run skills:validate` and Prettier in check mode                                                    |
 
-For meaningful visual changes, browser inspection is appropriate because the
-rendered result is the product. Check both themes and show mobile separately
-from desktop when presenting alternatives.
+`pnpm run build`, `pnpm run test:e2e`, and `pnpm run validate` regenerate the
+public social card and portrait copy as a documented build step.
 
-## Git and GitHub Conventions
+## Git and GitHub
 
-- Never commit or push unless the user explicitly asks.
-- Use the `commit` skill for commits and the `open-pr` skill for pull requests.
+- Never commit unless the user explicitly asks.
+- A commit authorization always includes push authorization. After every
+  successful commit, always push the current branch as the final step unless the
+  user explicitly says not to push or to keep the commit local. The absence of a
+  separate push request is never a reason to skip it. Do not ask whether to push;
+  the commit workflow is incomplete until the push succeeds or a concrete push
+  failure is reported.
+- Stage explicit paths and inspect every untracked file before including it.
 - Use conventional prefixes: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`,
   and `test:`.
 - Keep commit messages and PR titles concise and focused on why.
 - Never add generated-by or co-author attribution for an agent.
 - Never force-push, discard unrelated changes, or bypass verification hooks.
-- Inspect untracked files before any broad staging operation.
 
-## Keeping This File Current
-
-Update `AGENTS.md` for durable command, architecture, validation, hosting,
-content, or agent-routing changes. Keep temporary implementation plans and
-detailed design explorations elsewhere.
+Update this file only for durable project-wide instructions. Keep implementation
+details in source, tests, or focused documentation nearer to the affected code.
