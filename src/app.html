@@ -53,6 +53,26 @@
 			}
 		</script>
 		%sveltekit.head%
+		<script
+			data-cloudflare-web-analytics-bootstrap
+			data-token="%sveltekit.env.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN%"
+		>
+			(() => {
+				const bootstrap = document.currentScript;
+				if (!(bootstrap instanceof HTMLScriptElement)) return;
+
+				const token = bootstrap.dataset.token?.trim();
+				const productionHostname = 'petrivan.com';
+
+				if (location.hostname !== productionHostname || !token) return;
+
+				const tracker = document.createElement('script');
+				tracker.type = 'module';
+				tracker.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+				tracker.dataset.cfBeacon = JSON.stringify({ token });
+				document.head.append(tracker);
+			})();
+		</script>
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>

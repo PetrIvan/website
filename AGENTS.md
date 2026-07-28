@@ -146,9 +146,10 @@ responsibility rather than expanding an undifferentiated component directory.
 - Do not rely on color alone. Test narrow widths, long labels, text zoom, both
   themes, and reduced motion where relevant.
 
-Umami is the selected analytics provider. If enabled, load it only in
-production, keep its public site identifier in public build configuration, avoid
-local and preview traffic, and document custom events.
+Cloudflare Web Analytics is the selected analytics provider. If enabled, load
+its beacon only in production, keep its public site token in public build
+configuration, and avoid local and preview traffic. It does not require the
+domain to use Cloudflare DNS or proxying.
 
 ## Verification
 

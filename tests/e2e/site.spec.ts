@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
 
 const routes = [
 	'/',
@@ -73,6 +74,47 @@ test('the theme toggle matches a stored dark theme before hydration', async ({ p
 
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 	await expect(page.getByRole('button', { name: 'Switch to light theme' })).toBeVisible();
+});
+
+test('analytics does not load outside the production hostname', async ({ page }) => {
+	await page.goto('/');
+
+	await expect(page.locator('script[data-cloudflare-web-analytics-bootstrap]')).toHaveCount(1);
+	await expect(page.locator('script[src][data-cf-beacon]')).toHaveCount(0);
+});
+
+test('configured analytics loads only on the production hostname', async ({ page }) => {
+	test.skip(
+		!process.env.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN,
+		'Requires a configured deployment build'
+	);
+
+	const builtPage = await readFile('build/index.html', 'utf8');
+	let beaconRequested = false;
+
+	await page.route('**/*', async (route) => {
+		const url = new URL(route.request().url());
+
+		if (url.hostname === 'petrivan.com' && url.pathname === '/') {
+			await route.fulfill({ body: builtPage, contentType: 'text/html' });
+		} else if (url.href === 'https://static.cloudflareinsights.com/beacon.min.js') {
+			beaconRequested = true;
+			await route.fulfill({ body: '', contentType: 'text/javascript' });
+		} else {
+			await route.abort();
+		}
+	});
+
+	await page.goto('https://petrivan.com/');
+
+	const beacon = page.locator(
+		'script[src="https://static.cloudflareinsights.com/beacon.min.js"][data-cf-beacon]'
+	);
+	await expect(beacon).toHaveAttribute('type', 'module');
+	expect(JSON.parse((await beacon.getAttribute('data-cf-beacon')) ?? '{}')).toEqual({
+		token: process.env.PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN
+	});
+	expect(beaconRequested).toBe(true);
 });
 
 test('the mobile navigation traps and restores focus', async ({ page, isMobile }) => {

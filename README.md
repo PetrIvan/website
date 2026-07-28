@@ -71,6 +71,38 @@ dependencies and browser engines, validates the repository, builds the static
 site, and deploys it to GitHub Pages after every push to `main`. The workflow can
 also be run manually.
 
+## Analytics
+
+Production traffic is measured with
+[Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/).
+The beacon is included only when `PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` is
+available during the deployment build, and it loads only on `petrivan.com`.
+Local development, browser tests, preview servers, and copied build artifacts do
+not send analytics.
+
+Cloudflare records visits and page views, page paths, referrers, countries,
+device and browser categories, page-load timing, and Core Web Vitals. It does not
+use cookies or local storage, log URL query strings, or support custom events or
+UTM campaign tracking. Client-side analytics can be blocked, so the totals are
+directional rather than an exact traffic census. Data is available for the
+previous six months.
+
+To finish the Cloudflare setup without moving the domain or changing DNS:
+
+1. [Open Cloudflare Web Analytics](https://dash.cloudflare.com/?to=/:account/web-analytics),
+   select **Add a site**, and enter `petrivan.com` as the hostname.
+2. Copy the token from the generated JavaScript snippet. It is the value inside
+   `data-cf-beacon`, not the whole snippet.
+3. Following GitHub's
+   [repository variable instructions](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-variables#creating-configuration-variables-for-a-repository),
+   create `PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` under **Settings > Secrets and
+   variables > Actions > Variables**. The token is embedded in the public site,
+   so it is configuration rather than a secret or API key.
+4. Push to `main` or manually run the **Deploy GitHub Pages** workflow. Visit
+   the live site with browser blocking disabled and confirm that the visit
+   appears in Cloudflare Web Analytics. No Cloudflare nameserver or proxy
+   change is required.
+
 [`static/robots.txt`](static/robots.txt) allows indexing and advertises the
 generated sitemap. [`static/CNAME`](static/CNAME) configures the canonical
 `petrivan.com` domain.
