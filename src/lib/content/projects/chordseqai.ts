@@ -61,14 +61,12 @@ export const chordseqai: Project = {
 				{
 					image: 'chordseqai-timeline',
 					alt: 'ChordSeqAI timeline with chord blocks, durations and playback controls',
-					caption: 'The timeline supports direct editing and playback.',
-					fit: 'contain'
+					caption: 'The timeline supports direct editing and playback.'
 				},
 				{
 					image: 'chordseqai-suggestions',
 					alt: 'Ranked chord suggestions in the ChordSeqAI interface',
-					caption: 'Suggestions are presented as alternatives within the editor.',
-					fit: 'contain'
+					caption: 'Suggestions are presented as alternatives within the editor.'
 				}
 			]
 		},

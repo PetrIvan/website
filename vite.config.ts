@@ -20,13 +20,23 @@ function addFootnoteHeading() {
 			const classes = node.properties?.className;
 
 			if (
-				node.tagName === 'div' &&
-				Array.isArray(classes) &&
-				classes.includes('footnotes') &&
+				(node.tagName === 'section' || node.tagName === 'div') &&
+				((Array.isArray(classes) && classes.includes('footnotes')) ||
+					node.properties?.dataFootnotes !== undefined) &&
 				node.children
 			) {
+				const existingHeading = node.children.find((child) => child.tagName === 'h2');
+				if (existingHeading) {
+					existingHeading.properties = {
+						...existingHeading.properties,
+						className: ['footnotes-heading']
+					};
+					existingHeading.children = [{ type: 'text', value: 'Footnotes' }];
+					return;
+				}
+
 				const dividerIndex = node.children.findIndex((child) => child.tagName === 'hr');
-				node.children.splice(dividerIndex + 1, 0, {
+				node.children.splice(dividerIndex >= 0 ? dividerIndex + 1 : 0, 0, {
 					type: 'element',
 					tagName: 'h2',
 					properties: { className: ['footnotes-heading'] },
@@ -60,6 +70,8 @@ export default defineConfig({
 			preprocess: [
 				mdsvex({
 					extensions: ['.svx'],
+					// mdsvex embeds the legacy Remark parser required by remark-footnotes.
+					// remark-gfm can replace it once mdsvex adopts Remark 13 or newer.
 					remarkPlugins: [remarkFootnotes],
 					rehypePlugins: [addFootnoteHeading],
 					smartypants: { dashes: 'oldschool' }

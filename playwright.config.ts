@@ -1,9 +1,8 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices, type PlaywrightTestConfig } from '@playwright/test';
 
 const baseURL = 'http://127.0.0.1:4176';
 
-export default defineConfig({
-	testDir: './tests/e2e',
+export const sharedConfig = {
 	fullyParallel: true,
 	forbidOnly: Boolean(process.env.CI),
 	retries: process.env.CI ? 2 : 0,
@@ -18,7 +17,12 @@ export default defineConfig({
 		url: baseURL,
 		reuseExistingServer: false,
 		timeout: 30_000
-	},
+	}
+} satisfies PlaywrightTestConfig;
+
+export default defineConfig({
+	...sharedConfig,
+	testDir: './tests/e2e',
 	projects: [
 		{ name: 'chromium-desktop', use: { ...devices['Desktop Chrome'] } },
 		{ name: 'firefox-desktop', use: { ...devices['Desktop Firefox'] } },

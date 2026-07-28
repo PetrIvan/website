@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getPosts } from './posts.server';
+import { getPosts, normalizePostMetadata } from './posts.server';
 import { formatPostDate } from './posts';
 
 describe('formatPostDate', () => {
@@ -20,5 +20,20 @@ describe('formatPostDate', () => {
 			}
 		});
 		expect(post).not.toHaveProperty('component');
+	});
+
+	it('validates parsed frontmatter at runtime', () => {
+		expect(
+			normalizePostMetadata(
+				{ title: '  Title  ', description: '  Description  ', date: '2026-07-27' },
+				'test.svx'
+			)
+		).toEqual({ title: 'Title', description: 'Description', date: '2026-07-27' });
+		expect(() =>
+			normalizePostMetadata({ title: '', description: 'Description', date: '2026-07-27' })
+		).toThrow(/title must be a non-empty string/);
+		expect(() =>
+			normalizePostMetadata({ title: 'Title', description: 'Description', date: '2026-02-30' })
+		).toThrow(/Invalid blog post date/);
 	});
 });

@@ -3,8 +3,7 @@
 [![CI](https://github.com/PetrIvan/website/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/PetrIvan/website/actions/workflows/ci.yml)
 
 This repository contains the source for [petrivan.com](https://petrivan.com), my
-personal website and blog. It includes project write-ups, essays and notes, a
-short account of my background, and the source for my résumé.
+personal website and blog.
 
 The site uses SvelteKit, Svelte 5, TypeScript, Tailwind CSS, mdsvex, and
 `@sveltejs/enhanced-img`. It is prerendered as static files and published to
@@ -23,6 +22,7 @@ resume/                  Typst résumé source, fonts, and local assets
 scripts/                 generated-asset and repository utilities
 static/                  public files copied directly into the build
 tests/e2e/               Playwright browser tests
+tests/visual/            scheduled visual-review captures
 ```
 
 Project pages are typed content records. Blog posts are `.svx` files with
@@ -39,57 +39,43 @@ pnpm exec playwright install chromium firefox webkit
 pnpm run dev
 ```
 
-| Command                      | Purpose                                                             |
-| ---------------------------- | ------------------------------------------------------------------- |
-| `pnpm run dev`               | Start the local development server                                  |
-| `pnpm run format`            | Format repository files                                             |
-| `pnpm run lint`              | Check formatting and lint the source                                |
-| `pnpm run check`             | Run Svelte and TypeScript checks                                    |
-| `pnpm run test`              | Run unit tests once                                                 |
-| `pnpm run test:e2e`          | Build and run desktop and mobile browser tests                      |
-| `pnpm run build`             | Generate public assets and write the site to `build/`               |
-| `pnpm run preview`           | Serve the production build locally                                  |
-| `pnpm run validate`          | Run lint, skill validation, checks, tests, and the production build |
-| `pnpm run skills:validate`   | Validate canonical skills and Claude compatibility wrappers         |
-| `pnpm run social-card:build` | Regenerate the social card and public portrait copy                 |
-| `pnpm run resume:build`      | Rebuild the downloadable résumé with Typst 0.14 or newer            |
+| Command                 | Purpose                                                        |
+| ----------------------- | -------------------------------------------------------------- |
+| `pnpm run dev`          | Start the local development server                             |
+| `pnpm run lint`         | Check formatting and lint the source                           |
+| `pnpm run check`        | Run Svelte and TypeScript checks                               |
+| `pnpm run test`         | Run unit tests once                                            |
+| `pnpm run test:e2e`     | Build and run desktop and mobile browser tests                 |
+| `pnpm run test:visual`  | Build and capture desktop/mobile screenshots for manual review |
+| `pnpm run build`        | Generate public assets and write the site to `build/`          |
+| `pnpm run preview`      | Serve the production build locally                             |
+| `pnpm run validate`     | Run the complete local verification suite                      |
+| `pnpm run resume:build` | Rebuild the downloadable résumé with Typst 0.14 or newer       |
 
-## Generated public assets
+## Build and verification
 
-`pnpm run build` runs `scripts/generate-social-card.mjs` first. The script writes
-both `static/social-card.png` and `static/petr-ivan-portrait.jpg` from the source
-portrait and the current design tokens. Because `test:e2e` builds the site,
-`pnpm run test:e2e` and `pnpm run validate` regenerate these files as well.
+`pnpm run build`, `pnpm run test:e2e`, and `pnpm run validate` regenerate the
+social card and canonical public portrait copy before building the site. The
+source images and generation script are tracked for reproducible CI builds.
 
-The résumé PDF is generated separately. Run `pnpm run resume:build` after
-changing `resume/resume.typ`, its fonts, or its local assets.
+The résumé PDF is generated separately with deterministic PDF metadata. Run
+`pnpm run resume:build` after changing `resume/resume.typ`, its fonts, or its
+local assets. CI rebuilds the PDF and verifies that the committed copy is
+current.
+
+The [Visual review workflow](.github/workflows/visual-review.yml) runs weekly
+and on demand. It captures representative pages in light and dark themes at
+desktop and mobile widths, then uploads the screenshots as a GitHub Actions
+artifact for manual comparison. Run `pnpm run test:visual` to create the same
+captures locally under `test-results/visual-review/`.
 
 ## Deployment
 
-The site is public. [GitHub Actions](.github/workflows/deploy-pages.yml) installs
-dependencies and browser engines, validates the repository, builds the static
-site, and deploys it to GitHub Pages after every push to `main`. The workflow can
-also be run manually.
-
-## Analytics
-
-Production traffic is measured with
-[Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/).
-The beacon is included only when `PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` is
-available during the deployment build, and it loads only on `petrivan.com`.
-Local development, browser tests, preview servers, and copied build artifacts do
-not send analytics.
-
-Cloudflare records visits and page views, page paths, referrers, countries,
-device and browser categories, page-load timing, and Core Web Vitals. It does not
-use cookies or local storage, log URL query strings, or support custom events or
-UTM campaign tracking. Client-side analytics can be blocked, so the totals are
-directional rather than an exact traffic census. Data is available for the
-previous six months.
-
-[`static/robots.txt`](static/robots.txt) allows indexing and advertises the
-generated sitemap. [`static/CNAME`](static/CNAME) configures the canonical
-`petrivan.com` domain.
+Pushes to `main` are validated and deployed to GitHub Pages by
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml). The workflow publishes
+the static `build/` output with the official Pages actions and can also be run
+manually. [`static/CNAME`](static/CNAME) defines the custom domain, while
+[`static/robots.txt`](static/robots.txt) advertises the generated sitemap.
 
 ## Licensing
 

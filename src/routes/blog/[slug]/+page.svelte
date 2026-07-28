@@ -17,6 +17,7 @@
 			container: HTMLElement;
 			preview: HTMLElement;
 			reference: HTMLAnchorElement;
+			previousDescription: string | null;
 			destroy: () => void;
 		}> = [];
 		const previewCloseDelay = 250;
@@ -95,13 +96,21 @@
 			)) {
 				link.target = '_blank';
 				link.rel = 'noopener noreferrer';
+				if (link.dataset.externalLinkEnhanced === 'true') continue;
+
+				const notice = document.createElement('span');
+				notice.className = 'sr-only';
+				notice.dataset.externalLinkNotice = '';
+				notice.textContent = ' (opens in a new tab)';
+				link.append(notice);
+				link.dataset.externalLinkEnhanced = 'true';
 			}
 		};
 
 		const enhanceReferences = () => {
 			enhanceExternalLinks();
 			for (const reference of root.querySelectorAll<HTMLAnchorElement>(
-				'a.footnote-ref:not([aria-describedby])'
+				'a.footnote-ref:not([data-footnote-preview-ready]), a[data-footnote-ref]:not([data-footnote-preview-ready])'
 			)) {
 				const target = reference.getAttribute('href');
 				const container = reference.parentElement;
@@ -111,17 +120,24 @@
 				if (!note) continue;
 
 				const copy = note.cloneNode(true) as HTMLElement;
-				copy.querySelectorAll('.footnote-backref').forEach((backlink) => backlink.remove());
+				copy
+					.querySelectorAll('[data-footnote-backref], .footnote-backref')
+					.forEach((backlink) => backlink.remove());
 
 				const preview = document.createElement('span');
-				const previewId = `${container.id}-preview`;
+				const previewId = `${reference.id || `footnote-reference-${enhancedReferences.length + 1}`}-preview`;
+				const previousDescription = reference.getAttribute('aria-describedby');
 				preview.id = previewId;
 				preview.className = 'footnote-preview';
 				preview.setAttribute('role', 'note');
 				preview.innerHTML = copy.innerHTML;
 
 				container.classList.add('footnote-anchor');
-				reference.setAttribute('aria-describedby', previewId);
+				reference.dataset.footnotePreviewReady = 'true';
+				reference.setAttribute(
+					'aria-describedby',
+					[previousDescription, previewId].filter(Boolean).join(' ')
+				);
 				container.append(preview);
 
 				let closeTimer: number | undefined;
@@ -161,7 +177,13 @@
 					delete container.dataset.previewOpen;
 				};
 
-				enhancedReferences.push({ container, preview, reference, destroy });
+				enhancedReferences.push({
+					container,
+					preview,
+					reference,
+					previousDescription,
+					destroy
+				});
 				positionPreview(container, preview);
 			}
 		};
@@ -176,11 +198,19 @@
 			observer.disconnect();
 			window.removeEventListener('resize', positionAllPreviews);
 			window.removeEventListener('scroll', positionVisiblePreviews);
-			for (const { container, preview, reference, destroy } of enhancedReferences) {
+			for (const {
+				container,
+				preview,
+				reference,
+				previousDescription,
+				destroy
+			} of enhancedReferences) {
 				destroy();
 				preview.remove();
 				container.classList.remove('footnote-anchor');
-				reference.removeAttribute('aria-describedby');
+				delete reference.dataset.footnotePreviewReady;
+				if (previousDescription) reference.setAttribute('aria-describedby', previousDescription);
+				else reference.removeAttribute('aria-describedby');
 			}
 		};
 	});
@@ -311,7 +341,8 @@
 		font-weight: 500;
 	}
 
-	.article-prose :global(sup[id^='fnref-']) {
+	.article-prose :global(sup[id^='fnref-']),
+	.article-prose :global(sup:has(> a[data-footnote-ref])) {
 		position: relative;
 		top: -0.4em;
 		font-size: 0.72em;
@@ -319,7 +350,8 @@
 		vertical-align: baseline;
 	}
 
-	.article-prose :global(a.footnote-ref) {
+	.article-prose :global(a.footnote-ref),
+	.article-prose :global(a[data-footnote-ref]) {
 		margin-left: 0.08em;
 		padding: 0;
 		color: inherit;
@@ -329,7 +361,9 @@
 	}
 
 	.article-prose :global(a.footnote-ref:hover),
-	.article-prose :global(a.footnote-ref:focus-visible) {
+	.article-prose :global(a.footnote-ref:focus-visible),
+	.article-prose :global(a[data-footnote-ref]:hover),
+	.article-prose :global(a[data-footnote-ref]:focus-visible) {
 		color: inherit;
 	}
 

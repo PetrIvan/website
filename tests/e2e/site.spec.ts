@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 import { readFile } from 'node:fs/promises';
 
 const routes = [
@@ -13,7 +14,9 @@ const routes = [
 ] as const;
 
 for (const route of routes) {
-	test(`${route} renders without browser errors or horizontal overflow`, async ({ page }) => {
+	test(`${route} renders without browser errors or horizontal overflow`, async ({
+		page
+	}, testInfo) => {
 		const errors: string[] = [];
 		page.on('console', (message) => {
 			if (message.type() === 'error') errors.push(message.text());
@@ -31,6 +34,16 @@ for (const route of routes) {
 			)
 		).toBe(true);
 		expect(errors).toEqual([]);
+		await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+			'href',
+			`https://petrivan.com${route}`
+		);
+		await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+
+		if (testInfo.project.name === 'chromium-desktop') {
+			const accessibilityScan = await new AxeBuilder({ page }).analyze();
+			expect(accessibilityScan.violations).toEqual([]);
+		}
 	});
 }
 
@@ -45,7 +58,7 @@ test('blog articles include their prerendered body', async ({ page }) => {
 test('footnote previews follow keyboard focus', async ({ page }) => {
 	await page.goto('/blog/token-boundaries/');
 
-	const reference = page.locator('a.footnote-ref').first();
+	const reference = page.locator('a.footnote-ref, a[data-footnote-ref]').first();
 	const preview = page.locator('.footnote-preview').first();
 	await reference.focus();
 
@@ -54,6 +67,38 @@ test('footnote previews follow keyboard focus', async ({ page }) => {
 	await page.getByRole('link', { name: 'All posts' }).focus();
 
 	await expect(preview).toBeHidden();
+});
+
+test('sitemap contains every public route', async ({ request }, testInfo) => {
+	test.skip(testInfo.project.name !== 'chromium-desktop', 'Covered once in Chromium');
+	const response = await request.get('/sitemap.xml');
+	expect(response.ok()).toBe(true);
+	const sitemap = await response.text();
+
+	for (const route of routes) {
+		expect(sitemap).toContain(`<loc>https://petrivan.com${route}</loc>`);
+	}
+});
+
+test('internal links resolve', async ({ page, request }, testInfo) => {
+	test.skip(testInfo.project.name !== 'chromium-desktop', 'Covered once in Chromium');
+	const paths = new Set<string>();
+
+	for (const route of routes) {
+		await page.goto(route);
+		const routePaths = await page.locator('a[href]').evaluateAll((links) =>
+			links.flatMap((link) => {
+				const url = new URL((link as HTMLAnchorElement).href);
+				return url.origin === location.origin ? [url.pathname] : [];
+			})
+		);
+		for (const path of routePaths) paths.add(path);
+	}
+
+	for (const path of paths) {
+		const response = await request.get(path);
+		expect(response.ok(), `${path} should resolve`).toBe(true);
+	}
 });
 
 test('the theme toggle updates the document theme', async ({ page }) => {

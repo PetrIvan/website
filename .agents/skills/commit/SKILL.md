@@ -33,11 +33,20 @@ personal material. Surface uncertain files to the user instead of guessing.
 ## Scope and validate
 
 Group the approved work into self-contained thematic commits. Format only the
-files in scope when possible, then run the narrowest checks from `AGENTS.md`.
-Use `pnpm run validate` for a broad site or configuration change.
+files in scope when possible.
 
-Do not hide failures with `--no-verify`. Fix failures caused by the scoped work.
-Report unrelated failures without absorbing them.
+Before committing, run the complete locally reproducible CI gate against the
+exact changes intended for the commit. Read `AGENTS.md` and the active CI
+workflows to identify every required command and repository policy check. In
+this repository, run `pnpm install --frozen-lockfile` and `pnpm run validate` at
+minimum. Also validate workflow syntax and action-policy requirements, such as
+full-length commit SHA pinning, because test commands do not cover job setup
+failures.
+
+Treat this as a mandatory gate for every commit, not only broad changes. If any
+local CI-equivalent check fails, or the exact commit contents cannot be
+validated, stop before committing and report the blocker. Do not hide failures
+with `--no-verify` or continue because a failure appears unrelated.
 
 ## Stage and inspect
 

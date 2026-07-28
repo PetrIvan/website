@@ -21,7 +21,7 @@
 		"preview": "vite preview",
 		"social-card:build": "node scripts/generate-social-card.mjs",
 		"skills:validate": "node scripts/validate-skills.mjs",
-		"resume:build": "typst compile --font-path resume/fonts resume/resume.typ static/petr-ivan-resume.pdf",
+		"resume:build": "typst compile --creation-timestamp 0 --font-path resume/fonts resume/resume.typ static/petr-ivan-resume.pdf",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -29,10 +29,12 @@
 		"format": "prettier --write .",
 		"test:unit": "vitest",
 		"test:e2e": "pnpm run build && playwright test",
+		"test:visual": "pnpm run build && playwright test --config playwright.visual.config.ts",
 		"test": "vitest run",
 		"validate": "pnpm run lint && pnpm run skills:validate && pnpm run check && pnpm run test && pnpm run test:e2e"
 	},
 	"devDependencies": {
+		"@axe-core/playwright": "^4.12.1",
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "^1.62.0",
 		"@resvg/resvg-js": "2.6.2",
@@ -63,5 +65,12 @@
 	"dependencies": {
 		"@fluentui/svg-icons": "^1.1.333",
 		"@fontsource-variable/figtree": "^5.2.10"
+	},
+	"pnpm": {
+		"overrides": {
+			"brace-expansion@<=5.0.7": "5.0.8",
+			"cookie@<0.7.0": "0.7.2",
+			"sharp@<0.35.0": "0.35.3"
+		}
 	}
 }

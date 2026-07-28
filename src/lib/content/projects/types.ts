@@ -37,7 +37,6 @@ export interface ProjectMedia {
 	alt: string;
 	caption?: string;
 	credit?: string;
-	fit?: 'cover' | 'contain';
 	position?: string;
 }
 

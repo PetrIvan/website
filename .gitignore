@@ -10,6 +10,7 @@ node_modules
 /build
 /coverage
 /test-results/
+/tmp/
 
 # OS
 .DS_Store

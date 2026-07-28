@@ -83,7 +83,9 @@ src/
 static/                  public files copied unchanged into the build
 resume/                  Typst résumé source, fonts, and local assets
 scripts/                 deterministic asset and repository utilities
-tests/e2e/               Playwright browser tests
+tests/
+├── e2e/                 Playwright browser tests
+└── visual/              scheduled manual-review captures
 ```
 
 When a feature grows, group its components, types, and utilities by
@@ -155,15 +157,15 @@ domain to use Cloudflare DNS or proxying.
 
 Use the narrowest checks that cover the change:
 
-| Change                                                    | Verification                                                                                             |
-| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Svelte, TypeScript, content loading                       | `pnpm run check` and `pnpm run test`                                                                     |
-| Styles, layout, or interaction                            | `pnpm run check`, `pnpm run test:e2e`, and visual inspection in both themes at desktop and mobile widths |
-| Static routes, metadata, assets, or adapter configuration | `pnpm run build` and inspect `build/`                                                                    |
-| Résumé source or content                                  | `pnpm run resume:build`, render the PDF, and inspect it                                                  |
-| Dependencies, CI, or deployment                           | `pnpm install --frozen-lockfile` and `pnpm run validate`                                                 |
-| Documentation or agent instructions                       | validate links and commands, then run Prettier in check mode on affected files                           |
-| Skills                                                    | `pnpm run skills:validate` and Prettier in check mode                                                    |
+| Change                                                    | Verification                                                                                                                                             |
+| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Svelte, TypeScript, content loading                       | `pnpm run check` and `pnpm run test`                                                                                                                     |
+| Styles, layout, or interaction                            | `pnpm run check`, `pnpm run test:e2e`, and visual inspection in both themes at desktop and mobile widths; use `pnpm run test:visual` for review captures |
+| Static routes, metadata, assets, or adapter configuration | `pnpm run build` and inspect `build/`                                                                                                                    |
+| Résumé source or content                                  | `pnpm run resume:build`, render the PDF, and inspect it                                                                                                  |
+| Dependencies, CI, or deployment                           | `pnpm install --frozen-lockfile` and `pnpm run validate`                                                                                                 |
+| Documentation or agent instructions                       | validate links and commands, then run Prettier in check mode on affected files                                                                           |
+| Skills                                                    | `pnpm run skills:validate` and Prettier in check mode                                                                                                    |
 
 `pnpm run build`, `pnpm run test:e2e`, and `pnpm run validate` regenerate the
 public social card and portrait copy as a documented build step.
