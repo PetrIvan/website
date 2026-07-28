@@ -1,0 +1,27 @@
+name: Website bug
+description: Report broken behaviour, content, or accessibility on petrivan.com.
+title: '[Bug] '
+labels:
+  - bug
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: Which page is affected?
+      placeholder: https://petrivan.com/...
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and device
+      description: Include this when it may affect reproduction.
+      placeholder: Firefox 141 on Windows 11

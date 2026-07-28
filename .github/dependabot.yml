@@ -8,12 +8,22 @@ updates:
       day: monday
       time: '08:00'
       timezone: Europe/Budapest
+    rebase-strategy: disabled
     versioning-strategy: increase-if-necessary
     groups:
       minor-and-patch:
         update-types:
           - minor
           - patch
+    ignore:
+      # Keep runtime types aligned with the Node.js version in package.json.
+      - dependency-name: '@types/node'
+        update-types:
+          - version-update:semver-major
+      # This retired plugin needs a deliberate migration rather than a blind major bump.
+      - dependency-name: remark-footnotes
+        update-types:
+          - version-update:semver-major
 
   - package-ecosystem: github-actions
     directory: /
@@ -22,3 +32,8 @@ updates:
       day: monday
       time: '08:00'
       timezone: Europe/Budapest
+    rebase-strategy: disabled
+    groups:
+      actions:
+        patterns:
+          - '*'

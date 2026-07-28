@@ -21,6 +21,7 @@
 		"preview": "vite preview",
 		"social-card:build": "node scripts/generate-social-card.mjs",
 		"skills:validate": "node scripts/validate-skills.mjs",
+		"workflows:validate": "node scripts/validate-workflows.mjs",
 		"resume:build": "typst compile --creation-timestamp 0 --font-path resume/fonts resume/resume.typ static/petr-ivan-resume.pdf",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -31,7 +32,7 @@
 		"test:e2e": "pnpm run build && playwright test",
 		"test:visual": "pnpm run build && playwright test --config playwright.visual.config.ts",
 		"test": "vitest run",
-		"validate": "pnpm run lint && pnpm run skills:validate && pnpm run check && pnpm run test && pnpm run test:e2e"
+		"validate": "pnpm run lint && pnpm run skills:validate && pnpm run workflows:validate && pnpm run check && pnpm run test && pnpm run test:e2e"
 	},
 	"devDependencies": {
 		"@axe-core/playwright": "^4.12.1",

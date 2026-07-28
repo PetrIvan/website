@@ -5,6 +5,8 @@
 This repository contains the source for [petrivan.com](https://petrivan.com), my
 personal website and blog.
 
+[![Preview of petrivan.com](static/social-card.png)](https://petrivan.com)
+
 The site uses SvelteKit, Svelte 5, TypeScript, Tailwind CSS, mdsvex, and
 `@sveltejs/enhanced-img`. It is prerendered as static files and published to
 GitHub Pages.

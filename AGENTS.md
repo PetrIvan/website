@@ -185,6 +185,9 @@ public social card and portrait copy as a documented build step.
 - Use conventional prefixes: `feat:`, `fix:`, `refactor:`, `chore:`, `docs:`,
   and `test:`.
 - Keep commit messages and PR titles concise and focused on why.
+- Pin every external GitHub Action to a full 40-character commit SHA and retain
+  its release version in a comment; the repository enforces this policy before
+  jobs start.
 - Never add generated-by or co-author attribution for an agent.
 - Never force-push, discard unrelated changes, or bypass verification hooks.
 
