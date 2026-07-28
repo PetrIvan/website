@@ -1,6 +1,6 @@
 ---
 name: writing
-description: Draft, review, or edit prose anywhere in this repository, including website copy, blog posts, project write-ups, metadata, résumé text, and technical documentation. Use when a request concerns wording, structure, tone, citations, or Markdown conventions. Keep reviews read-only and make broad authorship changes only when the user explicitly requests them.
+description: Draft, review, or edit prose anywhere in this repository, including website copy, blog posts, project write-ups, metadata, résumé text, and technical documentation. Use when a request concerns wording, structure, tone, citations, or Markdown conventions. Enforce public/private publication boundaries, keep reviews read-only, and make broad authorship changes only when the user explicitly requests them.
 ---
 
 # Writing
@@ -32,6 +32,26 @@ Treat the user's text and requested scope as authoritative.
   prose.
 - Prefer concrete statements over filler. Do not invent experience, motivation,
   results, sources, or personal details.
+
+## Respect publication boundaries
+
+- Treat every tracked repository file and generated site artifact as public
+  unless the repository explicitly identifies it as private.
+- Put only durable information intended for the artifact's actual public readers
+  into public files. Do not use public prose as a scratchpad or operational
+  handoff.
+- Never publish setup status, unfinished checklists, account-console steps,
+  credential or token handling, deployment handoff notes, private planning,
+  debugging notes, prompt or conversation context, or instructions meant only
+  for the current user.
+- Give temporary or user-specific operational instructions in chat. Store them
+  outside the public repository only when the user explicitly requests a private
+  maintainer artifact.
+- Before writing to a public artifact, ask whether the text will remain
+  appropriate and useful to an unknown reader after the current task and setup
+  are complete. If not, do not write it there.
+- If an artifact's audience or publication status is unclear, stop and ask
+  before writing.
 
 ## Match the artifact
 
