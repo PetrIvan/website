@@ -41,6 +41,15 @@
 			</a>
 			<a
 				class="rounded-sm transition-[color] hover:text-foreground"
+				href="https://x.com/petrivanml"
+				target="_blank"
+				rel="me noreferrer"
+			>
+				X
+				<span class="sr-only"> (opens in a new tab)</span>
+			</a>
+			<a
+				class="rounded-sm transition-[color] hover:text-foreground"
 				href="https://www.linkedin.com/in/petr-ivan"
 				target="_blank"
 				rel="me noreferrer"

@@ -5,6 +5,7 @@
 	import mailIcon from '@fluentui/svg-icons/icons/mail_24_filled.svg?raw';
 	import githubIcon from '$lib/assets/icons/github.svg?raw';
 	import linkedinIcon from '$lib/assets/icons/linkedin.svg?raw';
+	import xIcon from '$lib/assets/icons/x.svg?raw';
 	import BrandIcon from '$lib/components/icons/BrandIcon.svelte';
 	import FluentIcon from '$lib/components/icons/FluentIcon.svelte';
 	import ProjectVisual from '$lib/components/projects/ProjectVisual.svelte';
@@ -74,6 +75,18 @@
 			>
 				<span class="inline-flex text-muted transition-[color] group-hover:text-accent">
 					<BrandIcon svg={githubIcon} />
+				</span>
+			</a>
+			<a
+				href="https://x.com/petrivanml"
+				target="_blank"
+				rel="me noreferrer"
+				aria-label="X (opens in a new tab)"
+				title="X"
+				class="group inline-flex size-10 items-center justify-center rounded-md"
+			>
+				<span class="inline-flex text-muted transition-[color] group-hover:text-accent">
+					<BrandIcon svg={xIcon} />
 				</span>
 			</a>
 			<a

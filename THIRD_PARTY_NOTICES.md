@@ -28,7 +28,7 @@ is the authoritative inventory of installed packages.
 ## Simple Icons
 
 - Source: <https://github.com/simple-icons/simple-icons>
-- Included marks: GitHub and LinkedIn
+- Included marks: GitHub, LinkedIn and X
 - License: CC0 1.0 Universal
 - License text: `LICENSES/Simple-Icons-CC0-1.0.txt`
 - Brand names and trademarks remain the property of their respective owners.

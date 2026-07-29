@@ -57,6 +57,7 @@
 		{/if}
 	{/if}
 	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:creator" content="@petrivanml" />
 	<meta name="twitter:title" content={socialTitle} />
 	<meta name="twitter:description" content={socialDescription} />
 	<meta name="twitter:image" content={socialImageUrl} />

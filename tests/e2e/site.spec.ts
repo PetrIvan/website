@@ -64,6 +64,10 @@ for (const route of routes) {
 		);
 		await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', /\S/);
 		await expect(page.locator('meta[name="twitter:image"]')).toHaveCount(1);
+		await expect(page.locator('meta[name="twitter:creator"]')).toHaveAttribute(
+			'content',
+			'@petrivanml'
+		);
 		await expect(page.locator('link[rel="alternate"][type="application/rss+xml"]')).toHaveAttribute(
 			'href',
 			'https://petrivan.com/feed.xml'
@@ -82,6 +86,44 @@ test('blog articles include their prerendered body', async ({ page }) => {
 	await expect(page.locator('.article-prose')).toContainText(
 		'A token is primarily a unit of global computation'
 	);
+});
+
+test('profile links follow the intended exposure order', async ({ page }) => {
+	await page.goto('/');
+
+	const profileNavigation = page.getByRole('navigation', { name: 'Contact and profile links' });
+	const footerNavigation = page.getByRole('navigation', { name: 'Contact and social links' });
+
+	expect(
+		await profileNavigation
+			.locator('a')
+			.evaluateAll((links) => links.slice(1).map((link) => link.getAttribute('href')))
+	).toEqual([
+		'mailto:hi@petrivan.com',
+		'https://github.com/PetrIvan',
+		'https://x.com/petrivanml',
+		'https://www.linkedin.com/in/petr-ivan'
+	]);
+	expect(
+		await footerNavigation
+			.locator('a')
+			.evaluateAll((links) => links.slice(1).map((link) => link.getAttribute('href')))
+	).toEqual([
+		'mailto:hi@petrivan.com',
+		'https://github.com/PetrIvan',
+		'https://x.com/petrivanml',
+		'https://www.linkedin.com/in/petr-ivan'
+	]);
+	await expect(
+		profileNavigation.getByRole('link', {
+			name: 'X (opens in a new tab)'
+		})
+	).toHaveAttribute('href', 'https://x.com/petrivanml');
+	await expect(
+		footerNavigation.getByRole('link', {
+			name: 'X (opens in a new tab)'
+		})
+	).toHaveAttribute('href', 'https://x.com/petrivanml');
 });
 
 test('blog articles expose BlogPosting structured data', async ({ page }) => {
