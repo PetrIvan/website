@@ -1,6 +1,6 @@
 ---
 name: writing
-description: Draft, review, or edit prose anywhere in this repository, including website copy, blog posts, project write-ups, metadata, résumé text, and technical documentation. Use when a request concerns wording, structure, tone, citations, or Markdown conventions. Enforce public/private publication boundaries, keep reviews read-only, and make broad authorship changes only when the user explicitly requests them.
+description: Draft, review, or edit prose for this repository and its public presentation, including website copy, blog posts, project write-ups, metadata, résumé text, technical documentation, announcements, and social posts. Use when a request concerns wording, structure, tone, citations, or Markdown conventions. Enforce public/private publication boundaries, keep reviews read-only, and make broad authorship changes only when the user explicitly requests them.
 ---
 
 # Writing
@@ -66,6 +66,20 @@ facts already defined authoritatively in configuration or source code.
 
 For résumé text, keep claims concise, factual, and supportable. Do not inflate
 responsibility or outcomes.
+
+## Make announcements substantive
+
+- Do not write copy whose only function is to promote. Treat announcements,
+  social posts, launch notes, and blurbs as standalone pieces that must give the
+  reader something real even when they do not follow the link.
+- Lead with the strongest concrete claim, observation, result, example,
+  taxonomy, or tradeoff. Put the work itself in the post; let the link provide
+  depth rather than carry all the value.
+- Explain why something was made only through a specific problem, experience,
+  or question supported by the source. Never manufacture a story or hook.
+- Prefer understated framing such as "I wrote some notes" when authorship needs
+  mentioning. Avoid empty launch language, engagement bait, generic calls to
+  action, inflated adjectives, decorative hashtags, and irrelevant tags.
 
 ## Repository writing conventions
 
