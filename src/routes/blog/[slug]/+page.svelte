@@ -10,6 +10,8 @@
 	let { data }: { data: PageData } = $props();
 	let proseRoot = $state<HTMLDivElement>();
 	const articleUrl = $derived(`https://petrivan.com${page.url.pathname}`);
+	const articleImagePath = $derived(`/social/blog/${data.slug}.png`);
+	const articleImage = $derived(`https://petrivan.com${articleImagePath}`);
 	const articleStructuredData = $derived(
 		JSON.stringify({
 			'@context': 'https://schema.org',
@@ -19,7 +21,7 @@
 			datePublished: data.metadata.date,
 			url: articleUrl,
 			mainEntityOfPage: articleUrl,
-			image: 'https://petrivan.com/social-card.png',
+			image: articleImage,
 			author: {
 				'@type': 'Person',
 				name: 'Petr Ivan',
@@ -249,6 +251,10 @@
 	description={data.metadata.description}
 	type="article"
 	publishedTime={data.metadata.date}
+	socialTitle={data.metadata.title}
+	socialDescription={data.metadata.socialDescription}
+	socialImage={articleImagePath}
+	socialImageAlt={data.metadata.socialImageAlt ?? `Article card for ${data.metadata.title}.`}
 />
 
 <main class="mx-auto max-w-6xl px-6 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">

@@ -2,6 +2,12 @@
 title: 'What Should Count as a Transformer Token?'
 description: 'Choosing which information deserves independent global computation.'
 date: 2026-07-27
+socialDescription:
+  'Finer tokens spend more compute on the global sequence. Larger tokens move more work into local
+  encoding.'
+socialImageAlt:
+  'Diagram comparing finer tokens, which create more global positions, with larger tokens, which
+  require more local compression.'
 ---
 
 Imagine you are tasked with building a Transformer model to process audio clips. Each clip is a few

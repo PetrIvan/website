@@ -36,16 +36,30 @@ export function normalizePostMetadata(value: unknown, path = 'blog post'): BlogP
 	const metadata = value as Record<string, unknown>;
 	const title = typeof metadata.title === 'string' ? metadata.title.trim() : '';
 	const description = typeof metadata.description === 'string' ? metadata.description.trim() : '';
+	const socialDescription =
+		typeof metadata.socialDescription === 'string' ? metadata.socialDescription.trim() : undefined;
+	const socialImageAlt =
+		typeof metadata.socialImageAlt === 'string' ? metadata.socialImageAlt.trim() : undefined;
 
 	if (!title) throw new TypeError(`Invalid metadata in ${path}: title must be a non-empty string`);
 	if (!description) {
 		throw new TypeError(`Invalid metadata in ${path}: description must be a non-empty string`);
 	}
+	if (metadata.socialDescription !== undefined && !socialDescription) {
+		throw new TypeError(
+			`Invalid metadata in ${path}: socialDescription must be a non-empty string`
+		);
+	}
+	if (metadata.socialImageAlt !== undefined && !socialImageAlt) {
+		throw new TypeError(`Invalid metadata in ${path}: socialImageAlt must be a non-empty string`);
+	}
 
 	return {
 		title,
 		description,
-		date: normalizePostDate(metadata.date)
+		date: normalizePostDate(metadata.date),
+		...(socialDescription ? { socialDescription } : {}),
+		...(socialImageAlt ? { socialImageAlt } : {})
 	};
 }
 

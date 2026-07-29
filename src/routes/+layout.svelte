@@ -8,9 +8,6 @@
 	import SiteFooter from '$lib/components/site/SiteFooter.svelte';
 	import SiteHeader from '$lib/components/site/SiteHeader.svelte';
 
-	const socialImageAlt =
-		'Petr Ivan, machine learning engineer, with the text: I build machine learning systems and the products around them.';
-
 	let { children } = $props();
 
 	onMount(clearDeploymentAssetRecovery);
@@ -27,14 +24,6 @@
 	<meta name="author" content="Petr Ivan" />
 	<meta property="og:site_name" content="Petr Ivan" />
 	<meta property="og:locale" content="en_GB" />
-	<meta property="og:image" content="https://petrivan.com/social-card.png" />
-	<meta property="og:image:type" content="image/png" />
-	<meta property="og:image:width" content="1200" />
-	<meta property="og:image:height" content="630" />
-	<meta property="og:image:alt" content={socialImageAlt} />
-	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:image" content="https://petrivan.com/social-card.png" />
-	<meta name="twitter:image:alt" content={socialImageAlt} />
 </svelte:head>
 
 <div class="flex min-h-screen flex-col">

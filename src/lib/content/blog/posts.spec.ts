@@ -16,7 +16,11 @@ describe('formatPostDate', () => {
 			metadata: {
 				title: 'What Should Count as a Transformer Token?',
 				description: 'Choosing which information deserves independent global computation.',
-				date: '2026-07-27'
+				date: '2026-07-27',
+				socialDescription:
+					'Finer tokens spend more compute on the global sequence. Larger tokens move more work into local encoding.',
+				socialImageAlt:
+					'Diagram comparing finer tokens, which create more global positions, with larger tokens, which require more local compression.'
 			}
 		});
 		expect(post).not.toHaveProperty('component');
@@ -35,5 +39,13 @@ describe('formatPostDate', () => {
 		expect(() =>
 			normalizePostMetadata({ title: 'Title', description: 'Description', date: '2026-02-30' })
 		).toThrow(/Invalid blog post date/);
+		expect(() =>
+			normalizePostMetadata({
+				title: 'Title',
+				description: 'Description',
+				date: '2026-07-27',
+				socialDescription: '   '
+			})
+		).toThrow(/socialDescription must be a non-empty string/);
 	});
 });

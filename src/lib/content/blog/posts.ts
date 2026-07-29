@@ -2,6 +2,8 @@ export interface BlogPostMetadata {
 	title: string;
 	description: string;
 	date: string;
+	socialDescription?: string;
+	socialImageAlt?: string;
 }
 
 export interface BlogPost {

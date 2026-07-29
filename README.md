@@ -60,8 +60,9 @@ By default, the development server is available at `http://localhost:1420`.
 ## Build and verification
 
 `pnpm run build`, `pnpm run test:e2e`, and `pnpm run validate` regenerate the
-social card and canonical public portrait copy before building the site. The
-source images and generation script are tracked for reproducible CI builds.
+site, article and project social cards and canonical public portrait copy before
+building the site. The source images and generation script are tracked for
+reproducible CI builds.
 
 The résumé PDF is generated separately. Run `pnpm run resume:build` after
 changing its Typst source, fonts, or local assets, then inspect the result before

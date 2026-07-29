@@ -16,6 +16,7 @@ export const load: PageServerLoad = ({ params }) => {
 	}
 
 	return {
+		slug: post.slug,
 		metadata: post.metadata,
 		content
 	};

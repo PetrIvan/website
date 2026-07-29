@@ -7,13 +7,29 @@
 	import ProjectMedia from '$lib/components/projects/ProjectMedia.svelte';
 	import ProjectVisual from '$lib/components/projects/ProjectVisual.svelte';
 	import PageMetadata from '$lib/components/site/PageMetadata.svelte';
+	import { projectSocialImages } from '$lib/content/projects/socialImages.js';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 	const project = $derived(data.project);
+	const socialImage = $derived(projectSocialImages[project.id as keyof typeof projectSocialImages]);
+	const socialImageAlt = $derived(
+		project.cardVisual.kind === 'image'
+			? project.cardVisual.media.alt
+			: `Preview of ${project.title}`
+	);
 </script>
 
-<PageMetadata title={`${project.title} · Petr Ivan`} description={project.summary} />
+<PageMetadata
+	title={`${project.title} · Petr Ivan`}
+	description={project.summary}
+	socialTitle={project.title}
+	socialImage={socialImage.publicPath}
+	socialImageType={socialImage.mimeType}
+	socialImageWidth={socialImage.width}
+	socialImageHeight={socialImage.height}
+	{socialImageAlt}
+/>
 
 <main>
 	<article>

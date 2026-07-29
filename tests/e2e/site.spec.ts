@@ -57,6 +57,13 @@ for (const route of routes) {
 			`https://petrivan.com${route}`
 		);
 		await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/);
+		await expect(page.locator('meta[property="og:image"]')).toHaveCount(1);
+		await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+			'content',
+			/^https:\/\/petrivan\.com\/.+\.png$/
+		);
+		await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', /\S/);
+		await expect(page.locator('meta[name="twitter:image"]')).toHaveCount(1);
 		await expect(page.locator('link[rel="alternate"][type="application/rss+xml"]')).toHaveAttribute(
 			'href',
 			'https://petrivan.com/feed.xml'
@@ -90,8 +97,87 @@ test('blog articles expose BlogPosting structured data', async ({ page }) => {
 		'@type': 'BlogPosting',
 		headline: 'What Should Count as a Transformer Token?',
 		datePublished: '2026-07-27',
-		url: 'https://petrivan.com/blog/token-boundaries/'
+		url: 'https://petrivan.com/blog/token-boundaries/',
+		image: 'https://petrivan.com/social/blog/token-boundaries.png'
 	});
+});
+
+test('blog articles expose article-specific social metadata', async ({ page }) => {
+	await page.goto('/blog/token-boundaries/');
+
+	await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+		'content',
+		'What Should Count as a Transformer Token?'
+	);
+	await expect(page.locator('meta[property="og:description"]')).toHaveAttribute(
+		'content',
+		'Finer tokens spend more compute on the global sequence. Larger tokens move more work into local encoding.'
+	);
+	await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+		'content',
+		'https://petrivan.com/social/blog/token-boundaries.png'
+	);
+	await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+		'content',
+		'https://petrivan.com/social/blog/token-boundaries.png'
+	);
+});
+
+test('project pages expose their existing visuals as social images', async ({ page }) => {
+	const projectCards = [
+		{
+			path: '/projects/chordseqai/',
+			title: 'ChordSeqAI',
+			image: 'https://petrivan.com/social/projects/chordseqai.png',
+			type: 'image/png',
+			width: '1200',
+			height: '630'
+		},
+		{
+			path: '/projects/ai-cup-2026/',
+			title: 'AI Cup 2026',
+			image: 'https://petrivan.com/social/projects/ai-cup-2026.png',
+			type: 'image/png',
+			width: '1919',
+			height: '1079'
+		},
+		{
+			path: '/projects/entitatis-mundus/',
+			title: 'Entitatis Mundus',
+			image: 'https://petrivan.com/social/projects/entitatis-mundus.png',
+			type: 'image/png',
+			width: '1200',
+			height: '630'
+		}
+	] as const;
+
+	for (const project of projectCards) {
+		await page.goto(project.path);
+		await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+			'content',
+			project.title
+		);
+		await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+			'content',
+			project.image
+		);
+		await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+			'content',
+			project.image
+		);
+		await expect(page.locator('meta[property="og:image:type"]')).toHaveAttribute(
+			'content',
+			project.type
+		);
+		await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute(
+			'content',
+			project.width
+		);
+		await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute(
+			'content',
+			project.height
+		);
+	}
 });
 
 test('primary navigation works after opening a blog article from the home page', async ({
