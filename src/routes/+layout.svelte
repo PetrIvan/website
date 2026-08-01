@@ -3,7 +3,6 @@
 	import '@fontsource-variable/figtree/wght-italic.css';
 	import { onMount } from 'svelte';
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import { clearDeploymentAssetRecovery } from '$lib/client/deploymentAssetRecovery';
 	import SiteFooter from '$lib/components/site/SiteFooter.svelte';
 	import SiteHeader from '$lib/components/site/SiteHeader.svelte';
@@ -14,7 +13,7 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link
 		rel="alternate"
 		type="application/rss+xml"
