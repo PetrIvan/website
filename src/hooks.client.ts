@@ -1,4 +1,4 @@
-import type { HandleClientError } from '@sveltejs/kit';
+import type { HandleClientError } from '@sveltejs/kit/hooks';
 import { deploymentAssetRecoveryKey } from '$lib/client/deploymentAssetRecovery';
 
 const deploymentAssetFailurePatterns = [
@@ -17,7 +17,7 @@ function isDeploymentAssetFailure(error: unknown) {
 	return deploymentAssetFailurePatterns.some((pattern) => pattern.test(errorText));
 }
 
-export const handleError: HandleClientError = ({ error, event, message }) => {
+export const handleError: HandleClientError = ({ error, event }) => {
 	console.error(error);
 
 	if (isDeploymentAssetFailure(error)) {
@@ -33,6 +33,4 @@ export const handleError: HandleClientError = ({ error, event, message }) => {
 			// Preserve the normal error page instead of risking an unguarded reload loop.
 		}
 	}
-
-	return { message };
 };

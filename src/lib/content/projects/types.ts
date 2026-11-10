@@ -1,3 +1,5 @@
+import type { AssetPath } from '$app/types';
+
 export type ProjectImageId =
 	| 'ai-cup-dashboard'
 	| 'chordseqai-editor'
@@ -41,8 +43,8 @@ export interface ProjectMedia {
 }
 
 export interface ProjectVideo {
-	src: string;
-	poster: string;
+	src: AssetPath;
+	poster: AssetPath;
 	alt: string;
 	caption?: string;
 }

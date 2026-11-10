@@ -29,7 +29,7 @@
 			<div class="divide-y divide-border border-y border-border">
 				{#each posts as post (post.slug)}
 					<article class="py-8 sm:py-10">
-						<a href={resolve(`/blog/${post.slug}/`)} class="group block">
+						<a href={resolve(`blog/${post.slug}/`)} class="group block">
 							<div>
 								<div class="flex flex-wrap items-center gap-3 text-sm text-accent">
 									<time datetime={post.metadata.date}>{formatPostDate(post.metadata.date)}</time>

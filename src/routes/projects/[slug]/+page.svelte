@@ -35,7 +35,7 @@
 	<article>
 		<header class="mx-auto max-w-6xl px-6 py-16 sm:px-8 sm:py-20 lg:px-10 lg:py-24">
 			<a
-				href={resolve('/projects/')}
+				href={resolve('projects/')}
 				class="inline-flex items-center gap-2 text-sm font-medium text-muted transition-[color] hover:text-foreground"
 			>
 				<FluentIcon svg={arrowLeftIcon} />
@@ -136,12 +136,10 @@
 											{#if typeof part === 'string'}
 												{part}
 											{:else}
-												<!-- Inline project links are trusted absolute URLs from local content data. -->
-												<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
 												<a
 													href={part.href}
 													target="_blank"
-													rel="noreferrer"
+													rel="external noreferrer"
 													aria-label={`${part.label} (opens in a new tab)`}
 													class="whitespace-nowrap"
 												>
@@ -204,7 +202,7 @@
 
 			<nav aria-label="Project navigation">
 				<a
-					href={resolve(`/projects/${data.nextProject.id}/`)}
+					href={resolve(`projects/${data.nextProject.id}/`)}
 					class="group grid gap-4 py-14 sm:grid-cols-[1fr_auto] sm:items-end sm:py-18 lg:py-22"
 				>
 					<div>

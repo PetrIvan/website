@@ -8,9 +8,9 @@
 	import ThemeToggle from './ThemeToggle.svelte';
 
 	const navigation = [
-		{ href: '/projects/', label: 'Projects' },
-		{ href: '/blog/', label: 'Blog' },
-		{ href: '/about/', label: 'About' }
+		{ href: 'projects/', label: 'Projects' },
+		{ href: 'blog/', label: 'Blog' },
+		{ href: 'about/', label: 'About' }
 	] as const;
 
 	let menuOpen = $state(false);
@@ -21,7 +21,7 @@
 	let menuScrollOffset = 0;
 
 	function isActive(href: string) {
-		return currentPath === href || currentPath.startsWith(href);
+		return currentPath.startsWith(`/${href}`);
 	}
 
 	async function openMenu() {

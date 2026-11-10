@@ -47,7 +47,7 @@
 			class="mt-5 flex items-center gap-1 md:col-start-1 md:row-start-4"
 		>
 			<a
-				href={asset('/petr-ivan-resume.pdf')}
+				href={asset('petr-ivan-resume.pdf')}
 				download
 				class="inline-flex h-10 items-center gap-2 rounded-md text-sm font-medium text-foreground transition-[color] hover:text-accent"
 			>
@@ -122,7 +122,7 @@
 					</h2>
 				</div>
 				<a
-					href={resolve('/projects/')}
+					href={resolve('projects/')}
 					class="inline-flex items-center gap-2 rounded-md text-sm font-medium text-muted transition-[color] hover:text-foreground"
 				>
 					All projects
@@ -133,7 +133,7 @@
 			<div class="mt-10 grid gap-5">
 				{#each featuredProjects as project (project.id)}
 					<a
-						href={resolve(`/projects/${project.id}/`)}
+						href={resolve(`projects/${project.id}/`)}
 						class="group rounded-[1.25rem] border border-border bg-surface p-5 transition-[border-color] hover:border-accent sm:p-7 lg:h-[15.25rem]"
 					>
 						<div
@@ -178,7 +178,7 @@
 						</h2>
 					</div>
 					<a
-						href={resolve('/blog/')}
+						href={resolve('blog/')}
 						class="inline-flex items-center gap-2 rounded-md text-sm font-medium text-muted transition-[color] hover:text-foreground"
 					>
 						All posts
@@ -189,7 +189,7 @@
 				<div class="mt-10 divide-y divide-border border-y border-border">
 					{#each recentPosts as post (post.slug)}
 						<article class="py-8 sm:py-10">
-							<a href={resolve(`/blog/${post.slug}/`)} class="group block">
+							<a href={resolve(`blog/${post.slug}/`)} class="group block">
 								<div>
 									<div class="flex flex-wrap items-center gap-3 text-sm text-accent">
 										<time datetime={post.metadata.date}>
