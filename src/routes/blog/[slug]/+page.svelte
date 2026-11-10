@@ -261,7 +261,7 @@
 	<article class="mx-auto max-w-3xl">
 		<header>
 			<a
-				href={resolve('/blog/')}
+				href={resolve('blog/')}
 				class="inline-flex items-center gap-2 text-sm font-medium text-muted transition-[color] hover:text-foreground"
 			>
 				<FluentIcon svg={arrowLeftIcon} />

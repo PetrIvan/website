@@ -43,7 +43,7 @@
 				Return home
 			</a>
 			<a
-				href={resolve('/blog/')}
+				href={resolve('blog/')}
 				class="inline-flex min-h-11 items-center justify-center rounded-md border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-[color,border-color] hover:border-accent hover:text-accent"
 			>
 				Browse writing

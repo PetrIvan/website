@@ -19,7 +19,7 @@ and unpublished personal records outside the repository.
 
 Requirements:
 
-- Node.js 22.12 or newer
+- Node.js 22.17 or newer
 - pnpm 10.17.1
 - Playwright browser engines for end-to-end tests
 - Typst 0.14.2 only when rebuilding the résumé PDF

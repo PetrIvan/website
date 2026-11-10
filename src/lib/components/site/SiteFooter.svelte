@@ -24,7 +24,7 @@
 		</div>
 
 		<nav class="flex flex-wrap gap-x-5 gap-y-3" aria-label="Contact and social links">
-			<a class="rounded-sm transition-[color] hover:text-foreground" href={resolve('/feed.xml')}>
+			<a class="rounded-sm transition-[color] hover:text-foreground" href={resolve('feed.xml')}>
 				RSS
 			</a>
 			<a class="rounded-sm transition-[color] hover:text-foreground" href="mailto:hi@petrivan.com">

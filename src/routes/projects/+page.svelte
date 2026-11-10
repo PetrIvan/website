@@ -23,7 +23,7 @@
 	<div class="mt-14 grid gap-7 sm:mt-18">
 		{#each projects as project (project.id)}
 			<a
-				href={resolve(`/projects/${project.id}/`)}
+				href={resolve(`projects/${project.id}/`)}
 				id={project.id}
 				class="group scroll-mt-6 rounded-[1.25rem] border border-border bg-surface p-5 transition-[border-color] hover:border-accent sm:p-7 lg:p-8"
 			>

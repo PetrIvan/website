@@ -29,8 +29,8 @@ export const entitatisMundus: Project = {
 	heroVisual: {
 		kind: 'video',
 		video: {
-			src: '/media/entitatis-mundus-gameplay-720p.mp4',
-			poster: '/media/entitatis-mundus-gameplay-720p-poster.jpg',
+			src: 'media/entitatis-mundus-gameplay-720p.mp4',
+			poster: 'media/entitatis-mundus-gameplay-720p-poster.jpg',
 			alt: 'Entitatis Mundus gameplay showcase',
 			caption: 'Gameplay showcase from the original jam release.'
 		}

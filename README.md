@@ -32,7 +32,7 @@ Project pages are typed content records. Blog posts are `.svx` files with
 
 ## Development
 
-The project requires Node.js 22.12 or newer and pnpm 10.17.1. Install the
+The project requires Node.js 22.17 or newer and pnpm 10.17.1. Install the
 Playwright engines before running the complete validation suite. Typst 0.14.2
 is needed only when rebuilding the résumé.
 

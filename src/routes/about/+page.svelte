@@ -32,7 +32,7 @@
 			</p>
 			<p class="mt-5">I’m interested in consciousness and philosophy of mind.</p>
 			<a
-				href={asset('/petr-ivan-resume.pdf')}
+				href={asset('petr-ivan-resume.pdf')}
 				download
 				class="mt-6 inline-flex items-center gap-2 rounded-md text-sm font-medium text-foreground transition-[color] hover:text-accent"
 			>
@@ -86,7 +86,7 @@
 				<p class="prose-content mt-4 max-w-xl leading-7 text-muted">
 					Completed a selective two-year apprenticeship supported by Microsoft, focused on modern
 					technologies and soft skills. Built
-					<a href={resolve('/projects/chordseqai/')}>ChordSeqAI</a>
+					<a href={resolve('projects/chordseqai/')}>ChordSeqAI</a>
 					as the final project and graduated with distinction.
 				</p>
 			</article>
