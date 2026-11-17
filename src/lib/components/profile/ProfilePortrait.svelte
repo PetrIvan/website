@@ -5,7 +5,7 @@
 	const id = $props.id();
 	const clipPathId = `profile-portrait-${id}`;
 
-	let { sizes, priority = false } = $props<{ sizes: string; priority?: boolean }>();
+	let { sizes, priority = false }: { sizes: string; priority?: boolean } = $props();
 </script>
 
 <div class="relative isolate aspect-square">
