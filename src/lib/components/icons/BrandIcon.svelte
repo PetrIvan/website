@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { svg } = $props<{ svg: string }>();
+	let { svg }: { svg: string } = $props();
 </script>
 
 <span class="brand-icon" aria-hidden="true">
